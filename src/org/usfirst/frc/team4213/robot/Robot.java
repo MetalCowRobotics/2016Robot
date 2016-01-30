@@ -1,6 +1,18 @@
 
 package org.usfirst.frc.team4213.robot;
 
+/* @Authors:
+ * --
+ * 
+ * 
+ * @Mentors
+ * --Tim Robert
+ * --
+ */
+
+
+
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Command;

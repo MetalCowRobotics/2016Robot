@@ -35,8 +35,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-
+	// Connects to Airflo Controller on Port 0
 	public static AIRFLOController controller = new AIRFLOController(0);
+	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test Drivetrain
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
 	

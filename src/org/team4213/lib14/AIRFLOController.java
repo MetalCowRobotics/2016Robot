@@ -30,18 +30,18 @@ public class AIRFLOController extends Joystick {
 	}
 	
 	public double getLY(){
-		return -getRawAxis(2);
-	}
-	
-	public double getLX(){
 		return getRawAxis(1);
 	}
 	
+	public double getLX(){
+		return -getRawAxis(0);
+	}
+	
 	public double getRY() {
-		return -getRawAxis(3);
+		return -getRawAxis(2);
 	}
 	public double getRX(){
-		return getRawAxis(4);
+		return getRawAxis(3);
 	}
 	
 	public boolean getHeadingPadPressed(){

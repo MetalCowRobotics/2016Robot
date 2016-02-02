@@ -1,6 +1,8 @@
 
 package org.usfirst.frc.team4213.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 /* @Authors:
  * --
  * 
@@ -36,7 +38,7 @@ public class Robot extends IterativeRobot {
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
-	public static AIRFLOController controller = new AIRFLOController(1);
+	public static AIRFLOController controller = new AIRFLOController(0);
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
 	
@@ -114,10 +116,9 @@ public class Robot extends IterativeRobot {
     
     public void tankDrive() {
     	
-    	if (controller.getLY() != 0 && controller.getRY() != 0) {
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getRY());
-    	}
+    		leftMotor.set(controller.getLX());
+    		rightMotor.set(controller.getRX());
+    		DriverStation.reportError("("+controller.getLY()+","+controller.getRY()+")\n", false);
     	
     }
     

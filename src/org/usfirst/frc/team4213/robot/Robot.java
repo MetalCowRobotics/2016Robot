@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.team4213.lib14.AIRFLOController;
-import org.usfirst.frc.team4213.robot.commands.ExampleCommand;
 import org.usfirst.frc.team4213.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +35,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
 	public static AIRFLOController controller = new AIRFLOController(0);
 	public static Spark leftMotor = new Spark(9);

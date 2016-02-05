@@ -1,5 +1,7 @@
 package org.usfirst.frc.team4213.robot;
 
+import java.nio.ByteBuffer;
+
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
@@ -7,6 +9,17 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 //import edu.wpi.first.wpilibj.command.Scheduler;
 //import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+
+
+
+
+
+
+
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+
 
 import org.team4213.lib14.AIRFLOController;
 //import org.usfirst.frc.team4213.robot.commands.ExampleCommand;
@@ -17,8 +30,14 @@ import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.RawData;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+
+
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.opencv.core.Mat;
+
+
+//import org.opencv.core.Core;
+//import org.opencv.core.Mat;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -30,6 +49,7 @@ import org.opencv.core.Mat;
 public class Robot extends IterativeRobot{
 	int session;
 	Image frame;
+	
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
 	public static AIRFLOController controller = new AIRFLOController(1);
@@ -44,6 +64,9 @@ public class Robot extends IterativeRobot{
      * used for any initialization code.
      */
     public void robotInit() {
+    	
+    	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);    	
+    	
     	frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
         // the camera name (ex "cam0") can be found through the roborio web interface
@@ -102,6 +125,7 @@ public class Robot extends IterativeRobot{
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+    	
     	NIVision.IMAQdxStartAcquisition(session);
 
         /**
@@ -109,14 +133,18 @@ public class Robot extends IterativeRobot{
          * which will in turn send it to the dashboard.
          */
     	
-        Mat m = new Mat(320,640, session);
-        byte[] bb = new byte[320*640];
-        RawData data = NIVision.imaqReadCustomData(frame, "");
-       // m.put
-        data.getBuffer().get(bb);
+       Mat m = new Mat(320,640, session);
+       byte[] bb = new byte[320*640];
+       RawData data =
+                NIVision.imaqFlatten(frame, NIVision.FlattenType.FLATTEN_IMAGE,
+                    NIVision.CompressionType.COMPRESSION_JPEG, 10 * 50);
+            ByteBuffer buffer = data.getBuffer();
+            
         
-        //NIVision.getBytes(bb, dst, 0, size)
-        m.put(320, 640, bb);
+       buffer.get(bb);
+         
+        
+       m.put(320, 640, bb);
         
         //NIVision.Rect rect = new NIVision.Rect(200, 250, 100, 100);
 

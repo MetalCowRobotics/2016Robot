@@ -63,9 +63,14 @@ public class Robot extends IterativeRobot{
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
+    
+    static {
+    	System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+    	//System.load("/usr/local/lib/lib_OpenCV/libopencv_core.so.2.4");
+    }
+    
     public void robotInit() {
     	
-    	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);    	
     	
     	frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.highgui.VideoCapture;
 
 
 import org.team4213.lib14.AIRFLOController;
@@ -59,15 +60,22 @@ public class Robot extends IterativeRobot{
     Command autonomousCommand;
     SendableChooser chooser;
 
+    VideoCapture vc = new VideoCapture(0);
+    /*
+     * We added the OpenCV  libraries to the RoboRIO manually over FTP 
+     * ( Specific Builds for the Roborio / ARMV7 )
+     */
+    
+    // Loads the OpenCV Library from The RoboRIO's Local Lib Directory 
+    static {
+    	System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+    }
+    
+    
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-    
-    static {
-    	System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
-    	//System.load("/usr/local/lib/lib_OpenCV/libopencv_core.so.2.4");
-    }
     
     public void robotInit() {
     	
@@ -131,20 +139,21 @@ public class Robot extends IterativeRobot{
      */
     public void teleopPeriodic() {
     	
-    	NIVision.IMAQdxStartAcquisition(session);
+    	/*NIVision.IMAQdxStartAcquisition(session);
 
         /**
          * grab an image, draw the circle, and provide it for the camera server
          * which will in turn send it to the dashboard.
          */
-    	
+       /*
        Mat m = new Mat(320,640, session);
-       byte[] bb = new byte[320*640];
        RawData data =
                 NIVision.imaqFlatten(frame, NIVision.FlattenType.FLATTEN_IMAGE,
                     NIVision.CompressionType.COMPRESSION_JPEG, 10 * 50);
             ByteBuffer buffer = data.getBuffer();
             
+       byte[] bb = new byte[buffer.limit()];
+
         
        buffer.get(bb);
          
@@ -158,13 +167,16 @@ public class Robot extends IterativeRobot{
             NIVision.IMAQdxGrab(session, frame, 1);
             
             
-            /*NIVision.imaqDrawShapeOnImage(frame, frame, rect,
-                    DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 0.0f);*/
+            //NIVision.imaqDrawShapeOnImage(frame, frame, rect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 0.0f);
             		
             CameraServer.getInstance().setImage(frame);
             Timer.delay(0.005);		// wait for a motor update time
         }
         NIVision.IMAQdxStopAcquisition(session);
+        */
+    	Mat m = new Mat();
+    	
+    	
         tankDrive();
     	//otherDrive();
     }
@@ -184,27 +196,5 @@ public class Robot extends IterativeRobot{
     	
     }
     
-    public void otherDrive() {
-    	
-    	if (controller.getLY() != 0) {
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getLY());
-    	}
-    	
-    	if (controller.getLX() != 0) {
-    		leftMotor.set(controller.getLX());
-    		rightMotor.set(-controller.getLX());
-    	}
-    	
-    	if (controller.getRY() != 0) {
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getLY());
-    	}
-    	
-    	if (controller.getRX() != 0) {
-    		leftMotor.set(controller.getRX());
-    		rightMotor.set(-controller.getRX());
-    	}
-    	
-    }
+
 }

@@ -9,7 +9,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="FRC2016/lib/lib_OpenCV/java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OpenCV-2.4.2.20"/>
-	<classpathentry kind="lib" path="C:/Users/MetalCow/git/2168_Vision_Example/_Libraries/softFP/lib_OpenCV/java/opencv-2410.jar"/>
+	<classpathentry kind="lib" path="lib/lib_OpenCV/java/opencv-2410.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

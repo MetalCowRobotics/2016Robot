@@ -2,8 +2,10 @@ package org.usfirst.frc.team4213.robot;
 
 // Import Various Java Utilities
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 
 // Import the WPILib Components
@@ -11,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 
 
@@ -43,6 +46,12 @@ public class Robot extends IterativeRobot{
 	// Single Threaded Asyc Executor
 	public ExecutorService executor =  Executors.newSingleThreadExecutor();
 	
+	public Callable<int[]> shooterImageProcess = () ->
+	{
+		
+		return new int[3]; 
+		
+	};
 
     
     
@@ -67,7 +76,7 @@ public class Robot extends IterativeRobot{
     	camController = new CowCamController(0,20, true);
     	// Runs the Camera
     	executor.submit(()->{
-    		camController.start(Optional.empty());
+    		camController.start(Optional.of(shooterImageProcess));
     	});
     	
     	DriverStation.reportError("got past thread init", false);

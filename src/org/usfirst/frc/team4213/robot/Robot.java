@@ -67,7 +67,7 @@ public class Robot extends IterativeRobot{
     	camController = new CowCamController(0,20, true);
     	// Runs the Camera
     	executor.submit(()->{
-    		camController.runCamera(Optional.empty());
+    		camController.start(Optional.empty());
     	});
     	
     	DriverStation.reportError("got past thread init", false);

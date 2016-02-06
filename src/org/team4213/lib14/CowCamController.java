@@ -2,6 +2,7 @@ package org.team4213.lib14;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -22,7 +23,8 @@ public class CowCamController<T> {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     // Camera Server Instance
     private Optional<CowCamServer> camServer;
-    public Optional<Future<T>> processOutput;
+    private Optional<Future<T>> processFuture;
+    public Optional<T> outputData;
     
 	
 	public CowCamController(int cameraPort, int fps, boolean streamCamera){
@@ -58,16 +60,24 @@ public class CowCamController<T> {
     	videoCapture.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT , 240);
 	}
 	
-
-
+	/*
+	 * Public function to Start the Infinite Camera Loop + Processing Task
+	 */
+	public void start(Optional<Callable<T>> task){
+		try{
+			runCamera(task);
+		}catch(Exception ex){
+			DriverStation.reportError(ex.getMessage(), true);
+		}
+	}
 	/*
 	 * Private function to Run the Infinite Camera Loop ( Blocking ) 
 	 */
-	public void runCamera(Optional<Callable<T>> task) {
+	private void runCamera(Optional<Callable<T>> task) throws InterruptedException, ExecutionException {
 		// Reads the First Camera Image so the Camera Server has something to Display
 		videoCapture.read(camImage);
 		// Executes the First Task so it's Initialized
-		processOutput = task.isPresent() ? Optional.of(executor.submit(task.get())) : Optional.empty();
+		processFuture = task.isPresent() ? Optional.of(executor.submit(task.get())) : Optional.empty();
 		// Checks if We use a Camera Server
 		if(camServer.isPresent()){
 			// If so , a new async process is created that runs the server loop
@@ -84,8 +94,10 @@ public class CowCamController<T> {
 			// Reads Camera to an Image Variable
 			videoCapture.read(camImage);
 			// Submits Task to Run Async + Get its future if The Process Finished.
-			if(task.isPresent() && processOutput.isPresent() && processOutput.get().isDone()){
-				processOutput = Optional.of(executor.submit(task.get()));
+			if(task.isPresent() && processFuture.isPresent() && processFuture.get().isDone()){
+					outputData = Optional.of(processFuture.get().get());
+				
+				processFuture = Optional.of(executor.submit(task.get()));
 			}
 		}
 	}

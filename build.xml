@@ -20,6 +20,7 @@
   <!-- <property name="target" value=""/> -->
 
   <!-- Any other property in build.properties can also be overridden. -->
+  <!-- This should be made more localized in the near future. so we dont worry about portability -->
   
   <property file="${user.home}/wpilib/wpilib.properties"/>
   <property file="build.properties"/>

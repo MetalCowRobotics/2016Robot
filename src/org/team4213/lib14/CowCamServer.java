@@ -17,7 +17,7 @@ import org.opencv.highgui.Highgui;
 // Import WPILib's Driver Station Item
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class CowCamServer {
+public class CowCamServer implements Runnable{
 	
 	private CowCamController cameraController;
 
@@ -60,7 +60,8 @@ public class CowCamServer {
 		return matByte.toArray();
 	}
 	
-	public void runServer() throws IOException, InterruptedException {
+	@Override
+	public void run() {
     	
 		// Runs an Infinite Loop for the Server
         while (true) {
@@ -91,7 +92,7 @@ public class CowCamServer {
 	            long period = (long) (1000 / (1.0 * fps));
 	        	while (true) {
 	        		long t0 = System.currentTimeMillis();
-	        		byte[] videoBits = matToByteArray(cameraController.camImage);
+	        		byte[] videoBits = matToByteArray(cameraController.getCamImage());
 	
 	        		// Streams data to Client
 	        		try {

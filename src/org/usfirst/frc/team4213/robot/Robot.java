@@ -3,18 +3,12 @@ package org.usfirst.frc.team4213.robot;
 // Import Various Java Utilities
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-
 
 // Import the WPILib Components
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
 
 
 // Import the Custom Extension Library Items
@@ -33,8 +27,6 @@ import org.team4213.lib14.CowCamController;
  */
 
 public class Robot extends IterativeRobot{
-	/*int session;
-	Image frame;*/ 
 	
 	// Airflo Controller
 	public static AIRFLOController controller = new AIRFLOController(1);
@@ -43,9 +35,7 @@ public class Robot extends IterativeRobot{
 	public static Spark rightMotor = new Spark(8);
 	// Camera Controller
 	public CowCamController camController;
-	// Single Threaded Asyc Executor
-	public ExecutorService executor =  Executors.newSingleThreadExecutor();
-	
+		
 	public Callable<int[]> shooterImageProcess = () ->
 	{
 		
@@ -73,12 +63,9 @@ public class Robot extends IterativeRobot{
     
     public void robotInit() {
     	// Initializes a New Camera Controller
-    	camController = new CowCamController(0,20, true);
+    	camController = new CowCamController(0,20, true,Optional.of(shooterImageProcess));
     	// Runs the Camera
-    	executor.submit(()->{
-    		camController.start(Optional.of(shooterImageProcess));
-    	});
-    	
+    	camController.start();
     	DriverStation.reportError("got past thread init", false);
     	
     }

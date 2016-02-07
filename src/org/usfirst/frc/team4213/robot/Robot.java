@@ -4,8 +4,20 @@ package org.usfirst.frc.team4213.robot;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-// Import the WPILib Components
+
+
 import edu.wpi.first.wpilibj.DriverStation;
+
+/* @Authors:
+ * --
+ * 
+ * 
+ * @Mentors
+ * --Tim Robert
+ * --
+ */
+
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,9 +25,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // Import the Custom Extension Library Items
 import org.team4213.lib14.AIRFLOController;
-import org.team4213.lib14.CowCamController;
 
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -26,12 +38,12 @@ import org.team4213.lib14.CowCamController;
  * directory.
  */
 
-public class Robot extends IterativeRobot{
-	
-	// Airflo Controller
-	public static AIRFLOController controller = new AIRFLOController(1);
-	// Motors
-	public static Spark leftMotor  = new Spark(9);
+public class Robot extends IterativeRobot {
+
+	// Connects to Airflo Controller on Port 0
+	public static AIRFLOController controller = new AIRFLOController(0);
+	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test Drivetrain
+	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
 	// Camera Controller
 	public CowCamController camController;
@@ -129,12 +141,11 @@ public class Robot extends IterativeRobot{
     
     public void tankDrive() {
     	
-    	if (controller.getLY() != 0 && controller.getRY() != 0) {
-    		DriverStation.reportError(""+controller.getLY(), false);
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getRY());
-    	}
-    	
+
+    		leftMotor.set(controller.getLX());
+    		rightMotor.set(controller.getRX());
+    		DriverStation.reportError("("+controller.getLY()+","+controller.getRY()+")\n", false);
+
     }
     
 

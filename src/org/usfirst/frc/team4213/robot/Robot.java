@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 
 
+import com.kauailabs.nav6.frc.*;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -38,12 +40,13 @@ public class Robot extends IterativeRobot {
 	// Connects to Airflo Controller on Port 0
 	public static AIRFLOController controller = new AIRFLOController(0);
 	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test Drivetrain
-	public static Spark leftMotor = new Spark(9);
-	public static Spark rightMotor = new Spark(8);
+	//public static Spark leftMotor = new Spark(9);
+	//public static Spark rightMotor = new Spark(8);
+	IMU imu = new IMU(new SerialPort(57600, SerialPort.Port.kOnboard));
 	
     Command autonomousCommand;
     SendableChooser chooser;
-
+    float desiredHeading = 0;
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -96,15 +99,29 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
+    	imu.zeroYaw();
     }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        
-        tankDrive();
-    	//otherDrive();
+        TankDrive.rawTankDrive(controller.getLY(), controller.getRY());
+    	
+    	if(controller.getButtonTripped(4) == true){
+    		desiredHeading = 0;
+    	}
+    	else if(controller.getButtonTripped(2)){
+    		desiredHeading = 90;
+    	}
+    	else if(controller.getButtonTripped(3)) {
+    		desiredHeading = -90;
+    	}
+    	else if(controller.getButtonTripped(1)) {
+    		desiredHeading = 180;
+    	}
+ 		DriverStation.reportError("("+imu.getCompassHeading()+","+")\n", false);
+ 		//TankDrive.regTankDrive(desiredHeading, imu.getYaw());
     }
     
     /**
@@ -112,36 +129,5 @@ public class Robot extends IterativeRobot {
      */
     public void testPeriodic() {
     }
-    
-    public void tankDrive() {
-    	
-    		leftMotor.set(controller.getLX());
-    		rightMotor.set(controller.getRX());
-    		DriverStation.reportError("("+controller.getLY()+","+controller.getRY()+")\n", false);
-    	
-    }
-    
-    public void otherDrive() {
-    	
-    	if (controller.getLY() != 0) {
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getLY());
-    	}
-    	
-    	if (controller.getLX() != 0) {
-    		leftMotor.set(controller.getLX());
-    		rightMotor.set(-controller.getLX());
-    	}
-    	
-    	if (controller.getRY() != 0) {
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getLY());
-    	}
-    	
-    	if (controller.getRX() != 0) {
-    		leftMotor.set(controller.getRX());
-    		rightMotor.set(-controller.getRX());
-    	}
-    	
-    }
+
 }

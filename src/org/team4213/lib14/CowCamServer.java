@@ -109,7 +109,7 @@ public class CowCamServer {
 
 					// Wait for the camera
 					long period = (long) (1000 / (1.0 * fps));
-					while (true) {
+					while (isStreaming && cameraController.isRunning()) {
 						long t0 = System.currentTimeMillis();
 						byte[] videoBits = cameraController.getImgAsBytes();
 

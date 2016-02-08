@@ -14,6 +14,9 @@ import org.opencv.core.MatOfInt;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 
+//Import WPILib's Driver Station Item
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * <p>
  * CowCamController is a very simple class that handles most of what one would
@@ -29,7 +32,7 @@ import org.opencv.highgui.VideoCapture;
  * <ul>
  * <li>it's own running state</li>
  * <li>a <code>VideoCapture</code> instance</li>
- * <li>an <code>Optional< Callable < T > ></code>(the Task></li>
+ * <li>an <code>Optional< Callable < T > ></code>(the Task)</li>
  * <li>an <code>Optional< Future < T > ></code> to wait for the output of the
  * Task</li>
  * <li>an <code>Optional < T > </code> to the actual output of the Task</li>
@@ -120,7 +123,7 @@ public class CowCamController<T> {
 	 * Returns a Byte Array from the Camera's Image. This method is safe for
 	 * usage by multiple threads.
 	 * <p>
-	 * <strong>Summary<strong><br>
+	 * <strong>Summary</strong><br>
 	 * Current implementation first sets the JPEG Quality to 500 in a
 	 * <code>MatOfInt</code> called params ( short for parameters ). Then
 	 * creates a <code>MatOfByte</code> called matByte to store the Image

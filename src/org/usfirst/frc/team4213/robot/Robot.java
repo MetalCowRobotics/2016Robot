@@ -3,6 +3,8 @@ package org.usfirst.frc.team4213.robot;
 // Import Various Java Utilities
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // Import the Custom Extension Library Items
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
+import org.team4213.lib14.CowCamServer;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
  * directory.
+ * @param <T>
  */
 
 public class Robot extends IterativeRobot {
@@ -44,14 +48,17 @@ public class Robot extends IterativeRobot {
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
 	// Camera Controller
-	public CowCamController camController;
-		
+	public CowCamServer camServer = new CowCamServer(1180);
+    public ExecutorService executor = Executors.newWorkStealingPool();
+
 	public Callable<int[]> shooterImageProcess = () ->
 	{
 		
 		return new int[3]; 
 		
-	};
+	};	
+	
+	public CowCamController<int[]> camController = new CowCamController<int[]>(0,20,Optional.of(shooterImageProcess));;
 
     
     
@@ -72,10 +79,11 @@ public class Robot extends IterativeRobot {
      */
     
     public void robotInit() {
-    	// Initializes a New Camera Controller
-    	camController = new CowCamController(0,20, true,Optional.of(shooterImageProcess));
+ 
     	// Runs the Camera
-    	camController.start();
+    	camController.start(executor);
+    	camServer.start(camController, executor);
+    	
     	DriverStation.reportError("got past thread init", false);
     	
     }
@@ -138,11 +146,9 @@ public class Robot extends IterativeRobot {
     }
     
     public void tankDrive() {
-    	
-
-    		leftMotor.set(controller.getLX());
-    		rightMotor.set(controller.getRX());
-    		DriverStation.reportError("("+controller.getLY()+","+controller.getRY()+")\n", false);
+		leftMotor.set(controller.getLX());
+		rightMotor.set(controller.getRX());
+		DriverStation.reportError("("+controller.getLY()+","+controller.getRY()+")\n", false);
 
     }
     

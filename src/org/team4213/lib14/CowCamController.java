@@ -5,8 +5,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfInt;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 
@@ -17,20 +21,22 @@ public class CowCamController<T>{
 	
 	
 	private VideoCapture videoCapture = new VideoCapture();;
-    volatile private Mat camImage = new Mat();
-    // Single Threaded Async Executor
-    private ExecutorService executor = Executors.newWorkStealingPool();;
-    // Camera Server Instance
-    private Optional<CowCamServer> camServer;
+    private Mat camImage = new Mat();
     // Future for the Executed Image Processing
     private Optional<Future<T>> processFuture;
     // Output from the Image Process Task
-    volatile private Optional<T> outputData;
+    private T dataOutput;
     // Task Given to Execute
     private Optional<Callable<T>> task;
+    // Boolean to Handle Running State
+    private volatile boolean isRunning = false;
+    
+    private ReadWriteLock imageLock = new ReentrantReadWriteLock();
+    private ReadWriteLock dataOutputLock = new ReentrantReadWriteLock();
+
     
 	
-	public CowCamController(int cameraPort, int fps, boolean streamCamera, Optional<Callable<T>> imgProcess){
+	public CowCamController(int cameraPort, int fps, Optional<Callable<T>> imgProcess){
 		
 		DriverStation.reportError("fancy", false);
 		
@@ -44,11 +50,6 @@ public class CowCamController<T>{
     		break;
     	}
 		
-		// If the Stream Camera boolean is True, Initialize a new Camera Server
-		if(streamCamera){
-			camServer = Optional.of(new CowCamServer(this,1180));
-		}
-		
 		// Set the Camera's Settings
 		setCameraOptions();
 		
@@ -56,10 +57,7 @@ public class CowCamController<T>{
 		
 		// Reads first Image
 		videoCapture.read(camImage);
-		
-		// Executes the Task Once
-		processFuture = task.isPresent() ? Optional.of(executor.submit(task.get())) : Optional.empty();
-		
+				
 	}
 	
 	
@@ -70,40 +68,76 @@ public class CowCamController<T>{
     	videoCapture.set(Highgui.CV_CAP_PROP_FRAME_WIDTH ,320);
     	videoCapture.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT , 240);
 	}
+
 	
-	public Mat getCamImage(){
-		return camImage;
+	// Converts a Mat to a Byte Array
+	public byte[] getImgAsBytes(){
+		
+		// Sets JPEG Quality to 10*50
+        MatOfInt params = new MatOfInt(Highgui.IMWRITE_JPEG_QUALITY, 10*50);
+
+        // Creates a Mat of Bytes
+		MatOfByte matByte = new MatOfByte();
+		
+		// Encoded the Image into JPEG and Stores it in the Mat of Bytes
+		imageLock.readLock().lock();
+		Highgui.imencode(".jpg", camImage, matByte, params);
+		imageLock.readLock().unlock();
+
+		// Returns the Mat of Bytes as an Array
+		return matByte.toArray();
 	}
 	
+	public Mat getImg(){
+		imageLock.readLock().lock();
+		Mat img = camImage.clone();
+		imageLock.readLock().unlock();
+		return img;
+	}
+	
+	public T getDataOutput(){
+		dataOutputLock.readLock().lock();
+		T output = dataOutput;
+		dataOutputLock.readLock().unlock();
+		
+		return output;
+		
+	}
 	
 	/*
 	 * Public function to Start the Infinite Camera Loop + Processing Task
 	 */
-	public void start() {
-		
-		// Checks if We use a Camera Server
-		if(camServer.isPresent()){
-			// If so , a new async process is created that runs the server loop
-			executor.submit(camServer.get());
-		}
+	public void start(ExecutorService executor) {
+		isRunning = true;
 		// Then We run the Infinite Camera Read Loop
-		executor.submit(readCamera());
+		executor.submit(readCamera(executor));
 		
 	}
-	
+	public void stop(){
+		isRunning = false;
+	}
 	/*
 	 * Private for creating the Infinite Camera Loop ( Blocking ) 
 	 */
-	private Runnable readCamera(){
+	private Runnable readCamera(ExecutorService executor){
 		// Returns a Runnable Instance and Returns it
 		return ()->{
+			// Runs Task for the First Time
+			processFuture = task.isPresent() ? Optional.of(executor.submit(task.get())) : Optional.empty();
+
 			while(true){
 				// Reads Camera to an Image Variable
+				imageLock.writeLock().lock();
 				videoCapture.read(camImage);
+				imageLock.writeLock().unlock();
+				
+				
 				// Submits Task to Run Async + Get its future if The Process Finished.
 				if(task.isPresent() && processFuture.isPresent() && processFuture.get().isDone()){
 						// Gets Data from the Future
-						outputData = Optional.of(processFuture.get().get());
+						dataOutputLock.writeLock().lock();
+						dataOutput = processFuture.get().get();
+						dataOutputLock.writeLock().unlock();
 						// Replaces the Old Future with a New One
 						processFuture = Optional.of(executor.submit(task.get()));
 				}

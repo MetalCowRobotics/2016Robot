@@ -107,7 +107,7 @@ public class CowCamServer {
 						continue;
 					}
 
-					// Wait for the camera
+					// Stream Periodically based on FPS
 					long period = (long) (1000 / (1.0 * fps));
 					while (isStreaming && cameraController.isRunning()) {
 						long t0 = System.currentTimeMillis();

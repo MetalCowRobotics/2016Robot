@@ -5,8 +5,13 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import edu.wpi.first.wpilibj.DriverStation;
 
+// Import the Custom Extension Library Items
+import org.team4213.lib14.AIRFLOController;
+import org.team4213.lib14.CowCamController;
+import org.team4213.lib14.CowCamServer;
+
+import edu.wpi.first.wpilibj.DriverStation;
 /* @Authors:
  * --
  * 
@@ -17,11 +22,6 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// Import the Custom Extension Library Items
-import org.team4213.lib14.AIRFLOController;
-import org.team4213.lib14.CowCamController;
-import org.team4213.lib14.CowCamServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,7 +42,7 @@ public class Robot extends IterativeRobot {
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
 	// Camera Controller
-	public CowCamServer camServer = new CowCamServer(1180);
+	public static CowCamServer camServer = new CowCamServer(1180);
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
 
@@ -70,6 +70,7 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
+	@Override
 	public void robotInit() {
 
 		// Runs the Camera
@@ -84,10 +85,12 @@ public class Robot extends IterativeRobot {
 	 * You can use it to reset any subsystem information you want to clear when
 	 * the robot is disabled.
 	 */
+	@Override
 	public void disabledInit() {
 
 	}
 
+	@Override
 	public void disabledPeriodic() {
 	}
 
@@ -102,6 +105,7 @@ public class Robot extends IterativeRobot {
 	 * chooser code above (like the commented example) or additional comparisons
 	 * to the switch structure below with additional strings & commands.
 	 */
+	@Override
 	public void autonomousInit() {
 
 	}
@@ -109,18 +113,19 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during autonomous
 	 */
+	@Override
 	public void autonomousPeriodic() {
 	}
 
+	@Override
 	public void teleopInit() {
 	}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
+	@Override
 	public void teleopPeriodic() {
-
-		DriverStation.reportError("telop period reached", false);
 
 		tankDrive();
 
@@ -129,17 +134,16 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during test mode
 	 */
+	@Override
 	public void testPeriodic() {
 	}
 
 	/**
 	 * Sets motors to Appropriate Speeds Based on Controller Input ( Tank Style
-	 * )
 	 */
 	public void tankDrive() {
-		leftMotor.set(controller.getLX());
-		rightMotor.set(controller.getRX());
-		DriverStation.reportError("(" + controller.getLY() + "," + controller.getRY() + ")\n", false);
+		leftMotor.set(controller.getLY());
+		rightMotor.set(controller.getRY());
 
 	}
 

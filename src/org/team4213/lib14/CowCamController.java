@@ -269,7 +269,7 @@ public class CowCamController<T> {
 			// Runs Task for the First Time
 			if(task.isPresent()){
 				task.get().setImage(getImg());
-				processFuture = Optional.of(executor.submit(task.get()))
+				processFuture = Optional.of(executor.submit(task.get()));
 			}else{
 				processFuture = Optional.empty();
 			}

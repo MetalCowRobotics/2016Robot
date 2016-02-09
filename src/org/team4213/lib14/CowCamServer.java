@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 
+import java.util.concurrent.Executors;
+
 // Import WPILib's Driver Station Item
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -22,6 +24,9 @@ public class CowCamServer {
 	private ServerSocket socket;
 	// Bytes to Use for Streaming
 	private static final byte[] kMagicNumber = { 0x01, 0x00, 0x00, 0x00 };
+	
+	//public ExecutorService executor = Executors.newSingleThreadExecutor();
+
 
 	/*
 	 * Initializer for Camera Server . Takes a Server Port
@@ -47,7 +52,10 @@ public class CowCamServer {
 	/*
 	 * Starts the Camera Server with the Desired Camera
 	 */
-	public void start(CowCamController cam, ExecutorService executor) {
+	public void start(CowCamController cam,ExecutorService executor) {
+		
+		// Sets Camera
+		cameraController = cam;
 		// Stops existing Process if there is One
 		stop();
 
@@ -56,6 +64,7 @@ public class CowCamServer {
 
 		// Checks if Camera is Running , Turns it on If Not
 		if (!cam.isRunning()) {
+			
 			cam.start(executor);
 		}
 
@@ -83,8 +92,13 @@ public class CowCamServer {
 	private Runnable runServer() {
 		return () -> {
 			// Runs an Infinite Loop for the Server
+			DriverStation.reportError("Starting Server", false);
+			//DriverStation.reportError(""+isStreaming, false);
+			DriverStation.reportError(""+cameraController.isRunning(), false);
+			
 			while (isStreaming && cameraController.isRunning()) {
 				try {
+					DriverStation.reportError("Server Started", false);
 					// Starts Socket + Waits for Communication
 					Socket s = socket.accept();
 
@@ -119,6 +133,7 @@ public class CowCamServer {
 							os.writeInt(videoBits.length);
 							os.write(videoBits);
 							os.flush();
+							Thread.yield();
 							long dt = System.currentTimeMillis() - t0;
 
 							// Sleeps to Delay for FPS Setting

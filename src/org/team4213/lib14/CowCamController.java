@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -13,6 +14,9 @@ import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfInt;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
+
+
+import org.usfirst.frc.team4213.robot.ImageProcessingTask;
 
 //Import WPILib's Driver Station Item
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,12 +51,16 @@ public class CowCamController<T> {
 	// Output from the Image Process Task
 	private Optional<T> dataOutput;
 	// Task Given to Execute
-	private Optional<Callable<T>> task;
+	private Optional<ImageProcessingTask> task;
 	// Boolean to Handle Running State
 	private volatile boolean isRunning = false;
 	// The Locks for the Two Cross Thread Accessed Variables
-	private ReadWriteLock imageLock = new ReentrantReadWriteLock();
-	private ReadWriteLock dataOutputLock = new ReentrantReadWriteLock();
+	//private ReadWriteLock imageLock = new ReentrantReadWriteLock();
+	//private ReadWriteLock dataOutputLock = new ReentrantReadWriteLock();
+	
+	//public ExecutorService executor = Executors.newSingleThreadExecutor();
+
+	
 
 	/**
 	 * Initializes a Camera Controller with a Port , Camera FPS , And an
@@ -77,11 +85,10 @@ public class CowCamController<T> {
 	 * @see Optional
 	 * @see Callable
 	 */
-	public CowCamController(int cameraPort, int fps, Optional<Callable<T>> imgProcess) {
+	public CowCamController(int cameraPort, int fps, Optional<ImageProcessingTask> imgProcess) {
 
 		// Reports that a Camera is Being Started to the Driver Station
 		DriverStation.reportError("Starting a camera at : " + cameraPort, false);
-
 		// Attempts to Open the Camera
 		while (true) {
 			try {
@@ -141,9 +148,9 @@ public class CowCamController<T> {
 		MatOfByte matByte = new MatOfByte();
 
 		// Encoded the Image into JPEG and Stores it in the Mat of Bytes
-		imageLock.readLock().lock();
-		Highgui.imencode(".jpg", camImage, matByte, params);
-		imageLock.readLock().unlock();
+		//imageLock.readLock().lock();
+		Highgui.imencode(".jpg", camImage.clone(), matByte, params);
+		//imageLock.readLock().unlock();
 
 		// Returns the Mat of Bytes as an Array
 		return matByte.toArray();
@@ -161,9 +168,9 @@ public class CowCamController<T> {
 	 */
 	public Mat getImg() {
 
-		imageLock.readLock().lock();
+		//imageLock.readLock().lock();
 		Mat img = camImage.clone();
-		imageLock.readLock().unlock();
+		//imageLock.readLock().unlock();
 
 		return img;
 	}
@@ -181,9 +188,9 @@ public class CowCamController<T> {
 	 */
 	public Optional<T> getDataOutput() {
 
-		dataOutputLock.readLock().lock();
+		//dataOutputLock.readLock().lock();
 		Optional<T> output = dataOutput;
-		dataOutputLock.readLock().unlock();
+		//dataOutputLock.readLock().unlock();
 
 		return output;
 
@@ -220,6 +227,7 @@ public class CowCamController<T> {
 		stop();
 		// Sets Current Running State to True
 		isRunning = true;
+		
 		// Then We run the Infinite Camera Read Loop
 		executor.submit(readCamera(executor));
 	}
@@ -259,19 +267,25 @@ public class CowCamController<T> {
 		// Returns a Runnable Instance and Returns it
 		return () -> {
 			// Runs Task for the First Time
-			processFuture = task.isPresent() ? Optional.of(executor.submit(task.get())) : Optional.empty();
-
+			if(task.isPresent()){
+				task.get().setImage(getImg());
+				processFuture = Optional.of(executor.submit(task.get()))
+			}else{
+				processFuture = Optional.empty();
+			}
+			DriverStation.reportError("Camera Started", false);
 			while (isRunning) {
 				// Reads Camera to an Image Variable
-				imageLock.writeLock().lock();
+				//imageLock.writeLock().lock();
 				videoCapture.read(camImage);
-				imageLock.writeLock().unlock();
+				//imageLock.writeLock().unlock();
 
 				// Submits Task to Run Async + Get its future if The Process
 				// Finished.
 				if (task.isPresent() && processFuture.isPresent() && processFuture.get().isDone()) {
 					// Updates Data from the Future
-					dataOutputLock.writeLock().lock();
+					//dataOutputLock.writeLock().lock();
+					task.get().setImage(getImg());
 					try {
 						dataOutput = Optional.of(processFuture.get().get());
 					} catch (InterruptedException e) {
@@ -279,10 +293,11 @@ public class CowCamController<T> {
 					} catch (ExecutionException e) {
 						DriverStation.reportError(e.getMessage(), true);
 					}
-					dataOutputLock.writeLock().unlock();
+					//dataOutputLock.writeLock().unlock();
 					// Replaces the Old Future with a New One
 					processFuture = Optional.of(executor.submit(task.get()));
 				}
+				Thread.yield();
 			}
 		};
 	}

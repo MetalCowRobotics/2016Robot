@@ -45,17 +45,12 @@ public class Robot extends IterativeRobot {
 	public static CowCamServer camServer = new CowCamServer(1180);
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
-
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
-	public Callable<int[]> shooterImageProcess = () -> {
 
-		return new int[3];
-
-	};
 
 	// A new Camera Controller for the Shooter
 	public CowCamController<int[]> shooterCamController = new CowCamController<int[]>(0, 20,
-			Optional.of(shooterImageProcess));;
+			Optional.of(new ShooterImageProcessor()));
 
 	/*
 	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
@@ -74,7 +69,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		// Runs the Camera
-		camServer.start(shooterCamController, executor);
+		camServer.start(shooterCamController,executor);
 
 		DriverStation.reportError("got past thread init", false);
 

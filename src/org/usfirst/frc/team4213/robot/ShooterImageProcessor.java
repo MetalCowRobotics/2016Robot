@@ -30,12 +30,19 @@ public class ShooterImageProcessor extends ImageProcessingTask<double[]> {
 		Point[] center = new Point[contours.size()];
 		MatOfPoint contour_point = new MatOfPoint();
 
+		int biggestRectIndex;
+		double biggestRectArea = 0;
+
 		for (int i = 0; i < contours.size(); i++) {
 			contours_poly[i] = new MatOfPoint2f();
 			Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i)),
 					contours_poly[i], 3, true);
 			contour_point.fromList(contours_poly[i].toList());
 			boundingRects[i] = Imgproc.boundingRect(contour_point);
+			if (boundingRects[i].area() > biggestRectArea) {
+				biggestRectArea = boundingRects[i].area();
+				biggestRectIndex = i;
+			}
 		}
 
 		final double angleX;

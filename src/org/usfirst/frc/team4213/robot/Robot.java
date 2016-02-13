@@ -123,6 +123,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 	}
+	
+	//Why is all this code commented?????????
 	/*
 	 * public void tankDrive() {
 	 * 

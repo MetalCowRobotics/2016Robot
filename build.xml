@@ -19,12 +19,13 @@
   <!-- By default the target is set to 10.TE.AM.2 -->
   <!-- <property name="target" value=""/> -->
 
-  <!-- Any other property in build.properties can also be overridden. -->
+  <!-- Any other property in build.properties can also be overridden. ANYTHING I WANT TO TYPE -->
   
   <property file="${user.home}/wpilib/wpilib.properties"/>
   <property file="build.properties"/>
   <property file="${user.home}/wpilib/java/${version}/ant/build.properties"/>
   
-  <import file="${wpilib.ant.dir}/build.xml"/>
-
+  <!--<import file="${wpilib.ant.dir}/build.xml"/>-->
+  <import file="${user.home}/wpilib/java/current/ant/build.xml"/>
+	<var name="classpath" value="${classpath}:.\lib\lib_OpenCV\java\opencv-2410.jar" />
 </project> 

@@ -1,15 +1,21 @@
-
 package org.usfirst.frc.team4213.robot;
+// Import Various Java Utilities
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+// Import the Custom Extension Library Items
 import org.team4213.lib14.AIRFLOController;
-
-import edu.wpi.first.wpilibj.DriverStation;
+import org.team4213.lib14.CowCamController;
+import org.team4213.lib14.CowCamServer;
 import edu.wpi.first.wpilibj.Encoder;
 
+import edu.wpi.first.wpilibj.DriverStation;
 /* @Authors:
  * --
- * 
- * 
+ *
+ *
  * @Mentors
  * --Tim Robert
  * --
@@ -25,13 +31,17 @@ import edu.wpi.first.wpilibj.TalonSRX;
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
  * directory.
+ *
+ *
  */
+
 public class Robot extends IterativeRobot {
 
 	// Connects to Airflo Controller on Port 0
 	public static AIRFLOController controller = new AIRFLOController(0);
+
+
 	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test
-	// Drivetrain
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
 	public static TalonSRX frontIntakeMotor = new TalonSRX(6);
@@ -40,18 +50,50 @@ public class Robot extends IterativeRobot {
 	public static TalonSRX cannonWheels = new TalonSRX(3);
 	public static Encoder encoder;
 
+
+	//Create robot parts
 	public static Intake intake = new Intake(1);
 	public static Skis skis = new Skis(2);
+
+
+	//////
+	// Create the cameras
+	//////
+	public static CowCamServer camServer = new CowCamServer(1180);
+	public CowCamController<int[]> shooterCamController =
+			new CowCamController<int[]>(0, 20,Optional.of(new ShooterImageProcessor()));
+
+
+	// The Thread Pool / Executor of Tasks to Use
+	public ExecutorService executor = Executors.newWorkStealingPool();
+	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
+
+
+
+	/*
+	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
+	 * Builds for the Roborio / ARMV7 )
+	 */
+	static {
+		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
+		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+	}
 
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-
-	@Override
+	 @Override
 	public void robotInit() {
 
+		// Runs the Camera
+		camServer.start(shooterCamController,executor);
+
+		DriverStation.reportError("got past thread init", false);
+
 	}
+
+
 
 	/**
 	 * This function is called once each time the robot enters Disabled mode.
@@ -66,6 +108,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledPeriodic() {
 	}
+
 
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
@@ -89,6 +132,7 @@ public class Robot extends IterativeRobot {
 		 */
 
 		// schedule the autonomous command (example)
+
 	}
 
 	/**
@@ -123,28 +167,35 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 	}
-	
-	//Why is all this code commented?????????
-	/*
-	 * public void tankDrive() {
-	 * 
-	 * if (controller.getLY() > 0) { leftMotor.set(Math.pow(controller.getLY(),
-	 * 2)); } else { leftMotor.set(-1 * Math.pow(controller.getLY(), 2)); }
-	 * 
-	 * if (controller.getRY() > 0) { rightMotor.set(Math.pow(controller.getRY(),
-	 * 2)); } else { rightMotor.set(-1 * Math.pow(controller.getRY(), 2)); }
-	 * 
-	 * }
-	 * 
-	 * public void intake() { double speed = 0.5;
-	 * 
-	 * if (controller.getButton(7)) { intake.intake(speed); }
-	 * 
-	 * }
-	 * 
-	 * public void skis() { double speed = 0.5;
-	 * 
-	 * if (controller.getButton(2)) { skis.setSkisUp(speed); } if
-	 * (controller.getButton(1)) { skis.setSkisDown(speed); } }
-	 */
+
+
+	public void tankDrive() {
+		if (controller.getLY() > 0) {
+			leftMotor.set(Math.pow(controller.getLY(),2));
+		} else {
+			leftMotor.set(-1 * Math.pow(controller.getLY(), 2));
+		}
+
+		if (controller.getRY() > 0) {
+			rightMotor.set(Math.pow(controller.getRY(),2));
+		} else {
+			rightMotor.set(-1 * Math.pow(controller.getRY(), 2));
+		}
+	}
+
+	 public void intake() {
+		 double speed = 0.5;
+		 if (controller.getButton(7)) {
+			intake.intake(speed);
+		}
+	 }
+
+	 public void skis() { double speed = 0.5;
+	 	if (controller.getButton(2)) {
+		 	skis.setSkisUp(speed);
+		 }
+	 	if (controller.getButton(1)) {
+	 		skis.setSkisDown(speed);
+		}
+	 }
 }

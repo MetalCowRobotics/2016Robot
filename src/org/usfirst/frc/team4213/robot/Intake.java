@@ -13,9 +13,9 @@ public class Intake{
 	CANSpeedController intakeMotor;
 	
 	public Intake(final int channel) {
-		enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+		//enc = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 		intakeMotor = new CANTalon(channel);
-		DriverStation.reportError("("+enc.getDistance()+")", false);
+		//DriverStation.reportError("("+enc.getDistance()+")", false);
 	}
 	
 	public void intake(double speed){

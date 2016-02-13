@@ -46,8 +46,8 @@ public class Robot extends IterativeRobot {
 	
 	
 
-	//public static Intake intake = new Intake(1);
-	//public static Skis skis = new Skis(2);
+	public static Intake intake = new Intake(2);
+	//public static Skis skis = new Skis(1);
 
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController = new CowCamController(0, 20);
@@ -123,6 +123,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 
 		tankDrive();
+		intakeDriver();
 		
 
 	}
@@ -141,6 +142,23 @@ public class Robot extends IterativeRobot {
 		leftMotor.set(controller.getLY()*controller.getThrottle());
 		rightMotor.set(controller.getRY()*controller.getThrottle());
 
+	}
+	
+	
+	
+	/**
+	 * Doing hte Intake stuff here.
+	 * There is no encoder it is just on and off
+	 */
+	public void intakeDriver(){
+		
+		if(controller.getButton(4)){ //forwared
+			intake.intake(1.0);
+		} else if(controller.getButton(1)){
+			intake.intake(-1.0); //backwards
+		} else{
+			intake.intakeStop(); //stops it if there is no button pushed
+		}
 	}
 
 }

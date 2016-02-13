@@ -23,7 +23,7 @@ public class AIRFLOController extends Joystick {
 		super(port);
 		previousStates = new boolean[20];
 		toggleStates = new boolean[20];
-		for (short i=0;i<20;i++){
+		for (short i = 0; i < 20; i++){
 			previousStates[i] = false;
 			toggleStates[i] = false;
 		}
@@ -34,11 +34,11 @@ public class AIRFLOController extends Joystick {
 	}
 	
 	public double getLX(){
-		return -getRawAxis(0);
+		return -1 * getRawAxis(0);
 	}
 	
 	public double getRY() {
-		return -getRawAxis(2);
+		return -1 * getRawAxis(2);
 	}
 	public double getRX(){
 		return getRawAxis(3);
@@ -48,27 +48,35 @@ public class AIRFLOController extends Joystick {
 		return getRawButton(1) || getRawButton(2) || getRawButton(3) || getRawButton(4);
 	}
         public double getThrottle() {
-            if(getRawButton(8) || getRawButton(7)) return 0.55;
-            else if(getRawButton(6) || getRawButton(9)) return 1;
+            if (getRawButton(8) || getRawButton(7)) return 0.55;
+            else if (getRawButton(6) || getRawButton(9)) return 1;
             else return 0.25;
         }
 	
 	public double getHeadingPadDirection(){
-		float x=0, y=0;
-		if (getRawButton(1)) y-=1;
-		if (getRawButton(2)) x+=1;
-		if (getRawButton(3)) x-=1;
-		if (getRawButton(4)) y+=1;
+		float x = 0, y = 0;
+		if (getRawButton(1)) y -= 1;
+		if (getRawButton(2)) x += 1;
+		if (getRawButton(3)) x -= 1;
+		if (getRawButton(4)) y += 1;
 		return Math.toDegrees(Math.atan2(x, y));
 	}
         
-        public String getHeadingPadCardinal(){
-            if (getRawButton(1)) return "south";
-            if (getRawButton(2)) return "east";
-            if (getRawButton(3)) return "west";
-            if (getRawButton(4)) return "north";
-            return null;
-        }
+	public CardinalDirection getHeadingPadCardinal() {
+		if (getRawButton(1))
+			return CardinalDirection.SOUTH;
+		if (getRawButton(2))
+			return CardinalDirection.EAST;
+		if (getRawButton(3))
+			return CardinalDirection.WEST;
+		if (getRawButton(4))
+			return CardinalDirection.NORTH;
+		return null;
+	}
+        
+    public enum CardinalDirection {
+    	NORTH,SOUTH,EAST,WEST
+    }
 	
 	public boolean getButton(int n) {
 		//previousStates[n] = getRawButton(n);

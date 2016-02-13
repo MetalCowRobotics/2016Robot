@@ -1,4 +1,5 @@
 package org.usfirst.frc.team4213.robot;
+
 // Import Various Java Utilities
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -60,14 +61,16 @@ public class Robot extends IterativeRobot {
 	// Create the cameras
 	//////
 	public static CowCamServer camServer = new CowCamServer(1180);
-	public CowCamController<int[]> shooterCamController =
-			new CowCamController<int[]>(0, 20,Optional.of(new ShooterImageProcessor()));
+
 
 
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
 
+
+	// A new Camera Controller for the Shooter
+	public CowCamController shooterCamController = new CowCamController(0, 20,CowCamController.ImageTask.SHOOTER);
 
 
 	/*
@@ -151,6 +154,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+
 		encoder = new Encoder(0, 3, false, Encoder.EncodingType.k4X);
 
 		DriverStation.reportError("" + encoder + "", false);
@@ -158,6 +162,7 @@ public class Robot extends IterativeRobot {
 		// curveDrive();
 		// intake();
 		// skis();
+
 
 	}
 

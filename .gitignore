@@ -1,0 +1,9 @@
+/bin/
+
+*.class
+build/jars/NetworkTables.jar
+build/jars/WPILib.jar
+build/jars/opencv-2410.jar
+dist/FRCUserProgram.jar
+dist/FRCUserProgram.jar
+sysProps.xml

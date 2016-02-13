@@ -1,7 +1,10 @@
 
 package org.usfirst.frc.team4213.robot;
 
+import org.team4213.lib14.AIRFLOController;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
 
 /* @Authors:
  * --
@@ -12,19 +15,9 @@ import edu.wpi.first.wpilibj.DriverStation;
  * --
  */
 
-
-
-
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
-import org.team4213.lib14.AIRFLOController;
-import org.usfirst.frc.team4213.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.TalonSRX;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -37,111 +30,119 @@ public class Robot extends IterativeRobot {
 
 	// Connects to Airflo Controller on Port 0
 	public static AIRFLOController controller = new AIRFLOController(0);
-	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test Drivetrain
+	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test
+	// Drivetrain
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
-	
-    Command autonomousCommand;
-    SendableChooser chooser;
+	public static TalonSRX frontIntakeMotor = new TalonSRX(6);
+	public static TalonSRX turretPitch = new TalonSRX(5);
+	public static TalonSRX turretYaw = new TalonSRX(4);
+	public static TalonSRX cannonWheels = new TalonSRX(3);
+	public static Encoder encoder;
 
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
-    public void robotInit() {
+	public static Intake intake = new Intake(1);
+	public static Skis skis = new Skis(2);
 
-    }
-	
 	/**
-     * This function is called once each time the robot enters Disabled mode.
-     * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-     */
-    public void disabledInit(){
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
 
-    }
-	
+	@Override
+	public void robotInit() {
+
+	}
+
+	/**
+	 * This function is called once each time the robot enters Disabled mode.
+	 * You can use it to reset any subsystem information you want to clear when
+	 * the robot is disabled.
+	 */
+	@Override
+	public void disabledInit() {
+
+	}
+
+	@Override
 	public void disabledPeriodic() {
 	}
 
 	/**
-	 * This autonomous (along with the chooser code above) shows how to select between different autonomous modes
-	 * using the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW
-	 * Dashboard, remove all of the chooser code and uncomment the getString code to get the auto name from the text box
-	 * below the Gyro
+	 * This autonomous (along with the chooser code above) shows how to select
+	 * between different autonomous modes using the dashboard. The sendable
+	 * chooser code works with the Java SmartDashboard. If you prefer the
+	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+	 * getString code to get the auto name from the text box below the Gyro
 	 *
-	 * You can add additional auto modes by adding additional commands to the chooser code above (like the commented example)
-	 * or additional comparisons to the switch structure below with additional strings & commands.
+	 * You can add additional auto modes by adding additional commands to the
+	 * chooser code above (like the commented example) or additional comparisons
+	 * to the switch structure below with additional strings & commands.
 	 */
-    public void autonomousInit() {
-        
-		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-		switch(autoSelected) {
-		case "My Auto":
-			autonomousCommand = new MyAutoCommand();
-			break;
-		case "Default Auto":
-		default:
-			autonomousCommand = new ExampleCommand();
-			break;
-		} */
-    	
-    	// schedule the autonomous command (example)
-    }
+	@Override
+	public void autonomousInit() {
 
-    /**
-     * This function is called periodically during autonomous
-     */
-    public void autonomousPeriodic() {
-    }
+		/*
+		 * String autoSelected = SmartDashboard.getString("Auto Selector",
+		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
+		 * = new MyAutoCommand(); break; case "Default Auto": default:
+		 * autonomousCommand = new ExampleCommand(); }
+		 */
 
-    public void teleopInit() {
-    }
+		// schedule the autonomous command (example)
+	}
 
-    /**
-     * This function is called periodically during operator control
-     */
-    public void teleopPeriodic() {
-        
-        tankDrive();
-    	//otherDrive();
-    }
-    
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
-    }
-    
-    public void tankDrive() {
-    	
-    		leftMotor.set(controller.getLX());
-    		rightMotor.set(controller.getRX());
-    		DriverStation.reportError("("+controller.getLY()+","+controller.getRY()+")\n", false);
-    	
-    }
-    
-    public void otherDrive() {
-    	
-    	if (controller.getLY() != 0) {
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getLY());
-    	}
-    	
-    	if (controller.getLX() != 0) {
-    		leftMotor.set(controller.getLX());
-    		rightMotor.set(-controller.getLX());
-    	}
-    	
-    	if (controller.getRY() != 0) {
-    		leftMotor.set(controller.getLY());
-    		rightMotor.set(controller.getLY());
-    	}
-    	
-    	if (controller.getRX() != 0) {
-    		leftMotor.set(controller.getRX());
-    		rightMotor.set(-controller.getRX());
-    	}
-    	
-    }
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	@Override
+	public void autonomousPeriodic() {
+	}
+
+	@Override
+	public void teleopInit() {
+	}
+
+	/**
+	 * This function is called periodically during operator control
+	 */
+	@Override
+	public void teleopPeriodic() {
+		encoder = new Encoder(0, 3, false, Encoder.EncodingType.k4X);
+
+		DriverStation.reportError("" + encoder + "", false);
+		// tankDrive();
+		// curveDrive();
+		// intake();
+		// skis();
+
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	@Override
+	public void testPeriodic() {
+	}
+	/*
+	 * public void tankDrive() {
+	 * 
+	 * if (controller.getLY() > 0) { leftMotor.set(Math.pow(controller.getLY(),
+	 * 2)); } else { leftMotor.set(-1 * Math.pow(controller.getLY(), 2)); }
+	 * 
+	 * if (controller.getRY() > 0) { rightMotor.set(Math.pow(controller.getRY(),
+	 * 2)); } else { rightMotor.set(-1 * Math.pow(controller.getRY(), 2)); }
+	 * 
+	 * }
+	 * 
+	 * public void intake() { double speed = 0.5;
+	 * 
+	 * if (controller.getButton(7)) { intake.intake(speed); }
+	 * 
+	 * }
+	 * 
+	 * public void skis() { double speed = 0.5;
+	 * 
+	 * if (controller.getButton(2)) { skis.setSkisUp(speed); } if
+	 * (controller.getButton(1)) { skis.setSkisDown(speed); } }
+	 */
 }

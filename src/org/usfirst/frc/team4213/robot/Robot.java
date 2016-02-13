@@ -1,5 +1,11 @@
 package org.usfirst.frc.team4213.robot;
+<<<<<<< HEAD
 
+=======
+// Import Various Java Utilities
+import java.util.Optional;
+import java.util.concurrent.Callable;
+>>>>>>> refs/remotes/origin/master
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -7,18 +13,21 @@ import java.util.concurrent.Executors;
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
+import edu.wpi.first.wpilibj.Encoder;
 
 import edu.wpi.first.wpilibj.DriverStation;
 /* @Authors:
  * --
- * 
- * 
+ *
+ *
  * @Mentors
  * --Tim Robert
  * --
  */
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.TalonSRX;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,7 +35,7 @@ import edu.wpi.first.wpilibj.Spark;
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
  * directory.
- * 
+ *
  *
  */
 
@@ -34,12 +43,31 @@ public class Robot extends IterativeRobot {
 
 	// Connects to Airflo Controller on Port 0
 	public static AIRFLOController controller = new AIRFLOController(0);
+
+
 	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test
-	// Drivetrain
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
-	// Camera Controller
+	public static TalonSRX frontIntakeMotor = new TalonSRX(6);
+	public static TalonSRX turretPitch = new TalonSRX(5);
+	public static TalonSRX turretYaw = new TalonSRX(4);
+	public static TalonSRX cannonWheels = new TalonSRX(3);
+	public static Encoder encoder;
+
+
+	//Create robot parts
+	public static Intake intake = new Intake(1);
+	public static Skis skis = new Skis(2);
+
+
+	//////
+	// Create the cameras
+	//////
 	public static CowCamServer camServer = new CowCamServer(1180);
+	public CowCamController<int[]> shooterCamController =
+			new CowCamController<int[]>(0, 20,Optional.of(new ShooterImageProcessor()));
+
+
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
@@ -47,6 +75,7 @@ public class Robot extends IterativeRobot {
 
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController = new CowCamController(0, 20,CowCamController.ImageTask.SHOOTER);
+
 
 	/*
 	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
@@ -61,7 +90,7 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	@Override
+	 @Override
 	public void robotInit() {
 
 		// Runs the Camera
@@ -70,6 +99,8 @@ public class Robot extends IterativeRobot {
 		DriverStation.reportError("got past thread init", false);
 
 	}
+
+
 
 	/**
 	 * This function is called once each time the robot enters Disabled mode.
@@ -85,6 +116,7 @@ public class Robot extends IterativeRobot {
 	public void disabledPeriodic() {
 	}
 
+
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -98,6 +130,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+
+		/*
+		 * String autoSelected = SmartDashboard.getString("Auto Selector",
+		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
+		 * = new MyAutoCommand(); break; case "Default Auto": default:
+		 * autonomousCommand = new ExampleCommand(); }
+		 */
+
+		// schedule the autonomous command (example)
 
 	}
 
@@ -117,11 +158,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if( shooterCamController.getDataOutput().isPresent() ){
-			DriverStation.reportError("\n"+shooterCamController.getDataOutput().get().angleX + " : " + shooterCamController.getDataOutput().get().angleY, false);
-		}
-		//tankDrive();
-		
+
+		encoder = new Encoder(0, 3, false, Encoder.EncodingType.k4X);
+
+		DriverStation.reportError("" + encoder + "", false);
+		// tankDrive();
+		// curveDrive();
+		// intake();
+		// skis();
+
 
 	}
 
@@ -132,13 +177,34 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 	}
 
-	/**
-	 * Sets motors to Appropriate Speeds Based on Controller Input ( Tank Style
-	 */
-	public void tankDrive() {
-		leftMotor.set(controller.getLY());
-		rightMotor.set(controller.getRY());
 
+	public void tankDrive() {
+		if (controller.getLY() > 0) {
+			leftMotor.set(Math.pow(controller.getLY(),2));
+		} else {
+			leftMotor.set(-1 * Math.pow(controller.getLY(), 2));
+		}
+
+		if (controller.getRY() > 0) {
+			rightMotor.set(Math.pow(controller.getRY(),2));
+		} else {
+			rightMotor.set(-1 * Math.pow(controller.getRY(), 2));
+		}
 	}
 
+	 public void intake() {
+		 double speed = 0.5;
+		 if (controller.getButton(7)) {
+			intake.intake(speed);
+		}
+	 }
+
+	 public void skis() { double speed = 0.5;
+	 	if (controller.getButton(2)) {
+		 	skis.setSkisUp(speed);
+		 }
+	 	if (controller.getButton(1)) {
+	 		skis.setSkisDown(speed);
+		}
+	 }
 }

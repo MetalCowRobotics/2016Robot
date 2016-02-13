@@ -138,8 +138,29 @@ public class Robot extends IterativeRobot {
 	 * Sets motors to Appropriate Speeds Based on Controller Input ( Tank Style
 	 */
 	public void tankDrive() {
-		leftMotor.set(controller.getLY()*controller.getThrottle());
-		rightMotor.set(controller.getRY()*controller.getThrottle());
+		
+		double topSpeedSprint =1.00;
+		double topSpeedCrawl = 0.3;
+		double topSpeedNormal = 0.6;
+		
+		
+		http://content.vexrobotics.com/docs/inventors-guide/main-2008/12-d-control-configurations-06272008.pdf
+		
+		double currentTopSpeed = controller.getThrottle(topSpeedNormal, topSpeedCrawl, topSpeedSprint);
+		
+		
+		
+		
+		
+		
+		
+		leftMotor.set(controller.getLY()*currentTopSpeed);
+		rightMotor.set(controller.getRY()*currentTopSpeed);
+		
+		
+		
+		
+		
 
 	}
 

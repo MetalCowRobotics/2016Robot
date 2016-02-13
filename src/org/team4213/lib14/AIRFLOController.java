@@ -47,10 +47,25 @@ public class AIRFLOController extends Joystick {
 	public boolean getHeadingPadPressed(){
 		return getRawButton(1) || getRawButton(2) || getRawButton(3) || getRawButton(4);
 	}
-        public double getThrottle() {
-            if(getRawButton(8) || getRawButton(7)) return 0.55;
-            else if(getRawButton(6) || getRawButton(9)) return 1;
-            else return 0.25;
+	
+	
+	
+	/**
+	* Determine the top speed threshold
+	* TODO: This needs to be moved to it an implementation of AIRLFOContorller, not here directly
+	* Bumper buttons on the controller will limit the speed to the CRAWL value
+	* Trigger buttons on the controller will limit the speed to the SPRINT value
+	* Otherwise it will allow the robot a speed up to Normal max.
+	*
+	* @param topSpeedNormal value double 0 to 1
+	* @param topSpeedCrawl value double 0 to 1
+	* @param topSpeedSprint  value double 0 to 1
+	* @return topSpeedCurrent value double 0 to 1
+	*/
+        public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
+            if(getRawButton(8) || getRawButton(7)) return topSpeedCrawl; //front-bottom triggers
+            else if(getRawButton(6) || getRawButton(9)) return topSpeedSprint; //fromt-bumper buttons
+            else return topSpeedNormal;
         }
 	
 	public double getHeadingPadDirection(){

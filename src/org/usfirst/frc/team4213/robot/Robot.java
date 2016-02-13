@@ -43,10 +43,14 @@ public class Robot extends IterativeRobot {
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
+	
+	
 
+	//public static Intake intake = new Intake(1);
+	//public static Skis skis = new Skis(2);
 
 	// A new Camera Controller for the Shooter
-	public CowCamController shooterCamController = new CowCamController(0, 20,CowCamController.ImageTask.SHOOTER);
+	public CowCamController shooterCamController = new CowCamController(0, 20);
 
 	/*
 	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
@@ -117,10 +121,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if( shooterCamController.getDataOutput().isPresent() ){
-			DriverStation.reportError("\n"+shooterCamController.getDataOutput().get().angleX + " : " + shooterCamController.getDataOutput().get().angleY, false);
-		}
-		//tankDrive();
+
+		tankDrive();
 		
 
 	}
@@ -136,8 +138,8 @@ public class Robot extends IterativeRobot {
 	 * Sets motors to Appropriate Speeds Based on Controller Input ( Tank Style
 	 */
 	public void tankDrive() {
-		leftMotor.set(controller.getLY());
-		rightMotor.set(controller.getRY());
+		leftMotor.set(controller.getLY()*controller.getThrottle());
+		rightMotor.set(controller.getRY()*controller.getThrottle());
 
 	}
 

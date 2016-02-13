@@ -1,8 +1,5 @@
 package org.usfirst.frc.team4213.robot;
 
-// Import Various Java Utilities
-import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,8 +46,7 @@ public class Robot extends IterativeRobot {
 
 
 	// A new Camera Controller for the Shooter
-	public CowCamController<int[]> shooterCamController = new CowCamController<int[]>(0, 20,
-			Optional.of(new ShooterImageProcessor()));
+	public CowCamController shooterCamController = new CowCamController(0, 20,CowCamController.ImageTask.SHOOTER);
 
 	/*
 	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
@@ -121,8 +117,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-
-		tankDrive();
+		if( shooterCamController.getDataOutput().isPresent() ){
+			DriverStation.reportError("\n"+shooterCamController.getDataOutput().get().angleX + " : " + shooterCamController.getDataOutput().get().angleY, false);
+		}
+		//tankDrive();
+		
 
 	}
 

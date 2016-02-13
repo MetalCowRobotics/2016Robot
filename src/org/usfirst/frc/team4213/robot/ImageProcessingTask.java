@@ -1,13 +1,12 @@
 package org.usfirst.frc.team4213.robot;
 
-import java.util.concurrent.Callable;
+import java.util.Optional;
 
 import org.opencv.core.Mat;
 
-public abstract class ImageProcessingTask<T> implements Callable<T> {
-	protected Mat camImage;
+public interface ImageProcessingTask{
 
-	public void setImage(Mat img){
-		camImage = img;
-	}
+	public void setImage(Mat img);
+
+	abstract Optional<Target> call();
 }

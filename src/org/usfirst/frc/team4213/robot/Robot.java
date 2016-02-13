@@ -14,14 +14,6 @@ import org.team4213.lib14.CowCamServer;
 import edu.wpi.first.wpilibj.Encoder;
 
 import edu.wpi.first.wpilibj.DriverStation;
-/* @Authors:
- * --
- * 
- * 
- * @Mentors
- * --Tim Robert
- * --
- */
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
@@ -40,36 +32,32 @@ import edu.wpi.first.wpilibj.TalonSRX;
 public class Robot extends IterativeRobot {
 
 	// Connects to Airflo Controller on Port 0
-	public static AIRFLOController controller = new AIRFLOController(0);
-	
+	public static AIRFLOController driverController = new AIRFLOController(0);
+
 	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test
 	public static Spark leftMotor = new Spark(9);
 	public static Spark rightMotor = new Spark(8);
 	public static TalonSRX frontIntakeMotor = new TalonSRX(6);
-	public static TalonSRX turretPitch = new TalonSRX(5);
-	public static TalonSRX turretYaw = new TalonSRX(4);
-	public static TalonSRX cannonWheels = new TalonSRX(3);
+	public static TalonSRX cannonAngle = new TalonSRX(5);
+	public static TalonSRX cannonSpin = new TalonSRX(4);
+	public static TalonSRX cannonMotors = new TalonSRX(3);
 	public static Encoder encoder;
 
-	//Create robot parts
+	// Create robot parts
 	public static Intake intake = new Intake(1);
 	public static Skis skis = new Skis(2);
-	
-	
-	//////
-	// Create the cameras
-	//////
-	public static CowCamServer camServer = new CowCamServer(1180);
-	public CowCamController<int[]> shooterCamController =
-			new CowCamController<int[]>(0, 20,Optional.of(new ShooterImageProcessor()));
 
-			
+	/*
+	 * Create the cameras
+	 */
+	public static CowCamServer camServer = new CowCamServer(1180);
+	public CowCamController<int[]> shooterCamController = new CowCamController<int[]>(0, 20,
+			Optional.of(new ShooterImageProcessor()));
+
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
-	
-	
-	
+
 	/*
 	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
 	 * Builds for the Roborio / ARMV7 )
@@ -79,21 +67,16 @@ public class Robot extends IterativeRobot {
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 	}
 
-	/**
+	/*
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-
 		// Runs the Camera
-		camServer.start(shooterCamController,executor);
-
+		camServer.start(shooterCamController, executor);
 		DriverStation.reportError("got past thread init", false);
-
 	}
-
-
 
 	/**
 	 * This function is called once each time the robot enters Disabled mode.
@@ -102,14 +85,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-
 	}
 
 	@Override
 	public void disabledPeriodic() {
 	}
 
-	
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -153,8 +134,9 @@ public class Robot extends IterativeRobot {
 		encoder = new Encoder(0, 3, false, Encoder.EncodingType.k4X);
 
 		DriverStation.reportError("" + encoder + "", false);
+		
+		//This code will loop again and again
 		tankDrive();
-		//curveDrive();
 		intake();
 		skis();
 
@@ -166,36 +148,91 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 	}
+
 	
 	
+	
+	//TODO: JavaDoc is missing
 	public void tankDrive() {
-		if (controller.getLY() > 0) {
-			leftMotor.set(Math.pow(controller.getLY(),2));
+		
+		//TODO: Does this come back as a -1 to 1 value??
+		//TODO: if the controller values come back as other numbers we will need to adjust
+		
+		//TODO: Here is how we want this:
+		/*
+		 * The sticks at normal need to have a MAXSPEED_NORMAL=50% robot top speed
+		 * If the user presses the front bumper (top) buttons then the MAXSPEED_SPRINT=100% robot top speed
+		 * If the user pressed the from trigger (bottom) buttons then the MAXSPEED_CREEP=25% robot top speed
+		 * Bumper and Trigger buttons should be mirrored, so left or right bumper is Sprint
+		 * and left OR right trigger is Creep
+		 * If both bumpers and triggers are pressed at the same time, then the robot should creep
+		 * 
+		 * Otherwise, speed from 0 should be a linear proportion of the % of angle on the stick
+		 * Because it will be difficult to 
+		 * 
+		 * ATTENTION: Look at AIRFLOController.getThrottle();
+		 * 
+		 * MAXSPEED_NORMAL=50%
+		 * MAXSPEED_SPRINT=100%
+		 * MAXSPEED_CREEP=25%
+		 * 
+		 * if(LTrigger or RTrigger is pressed){
+		 *    currentMaxSpeed = MAXSPEED_CREEP;
+		 * }elseif(LBumper or RBumper is pressed){
+		 *    currentMaxSpeed = MAXSPEED_SPRINT;
+		 * }else{
+		 *    currentMaxSpeed = MAXSPEED_NORMAL;
+		 * }
+		 * 
+		 * ALSO: In the future we need to extend AIRFLOController to make
+		 * a tank controller, slide controller... etc... so we have standard controller rigs.
+		 * 
+		 * 
+		 */
+		
+		
+		
+		if (driverController.getLY() > 0) {
+			leftMotor.set(driverController.getLY());
 		} else {
-			leftMotor.set(-1 * Math.pow(controller.getLY(), 2));
+			leftMotor.set(driverController.getLY());
 		}
-				 
-		if (controller.getRY() > 0) {
-			rightMotor.set(Math.pow(controller.getRY(),2));
+		
+		
+
+		if (driverController.getRY() > 0) {
+			rightMotor.set(driverController.getRY());
 		} else {
-			rightMotor.set(-1 * Math.pow(controller.getRY(), 2));
+			rightMotor.set(driverController.getRY());
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	//TODO: JavaDoc is missing
+	public void intake() {
+		double speed = 0.5;
+		if (driverController.getButton(7)) {
+			intake.intake(speed);
 		}
 	}
-		 
-	 public void intake() {
-		 double speed = 0.5;
-		 if (controller.getButton(7)) {
-			intake.intake(speed);
-		} 
-	 }
-	 
-	 public void skis() { double speed = 0.5;
-	 	if (controller.getButton(2)) {
-		 	skis.setSkisUp(speed);
-		 }
-	 	if (controller.getButton(1)) {
-	 		skis.setSkisDown(speed);
+
+	
+	//TODO: JavaDoc is missing
+	public void skis() {
+		double speed = 0.5;
+		if (driverController.getButton(2)) {
+			skis.setSkisUp(speed);
 		}
-	 }	
-	 
+		if (driverController.getButton(1)) {
+			skis.setSkisDown(speed);
+		}
+	}
+
 }

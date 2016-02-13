@@ -1,11 +1,8 @@
 package org.usfirst.frc.team4213.robot;
-<<<<<<< HEAD
 
-=======
 // Import Various Java Utilities
 import java.util.Optional;
 import java.util.concurrent.Callable;
->>>>>>> refs/remotes/origin/master
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -64,8 +61,7 @@ public class Robot extends IterativeRobot {
 	// Create the cameras
 	//////
 	public static CowCamServer camServer = new CowCamServer(1180);
-	public CowCamController<int[]> shooterCamController =
-			new CowCamController<int[]>(0, 20,Optional.of(new ShooterImageProcessor()));
+
 
 
 	// The Thread Pool / Executor of Tasks to Use

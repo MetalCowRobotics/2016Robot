@@ -10,12 +10,27 @@ import org.team4213.lib14.CowCamServer;
 
 import edu.wpi.first.wpilibj.DriverStation;
 /* @Authors:
- * --
- * 
- * 
- * @Mentors
- * --Tim Robert
- * --
+
+
+Ball flapper = 0
+Turret (lazySusan) = 1 
+Intake = 2
+ShooterLifter = 3 
+BallShooter = 4
+BoomClimberLift = 5
+Telescope(boom) = 6
+Skis = 7
+Left = 
+Right = 
+
+
+
+
+
+
+
+
+
  */
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;

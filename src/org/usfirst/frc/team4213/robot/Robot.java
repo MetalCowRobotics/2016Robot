@@ -155,28 +155,60 @@ public class Robot extends IterativeRobot {
 	 */
 	public void tankDrive() {
 		
-		double topSpeedSprint =1.00;
+		double topSpeedSprint = 1.00;
 		double topSpeedCrawl = 0.3;
 		double topSpeedNormal = 0.6;
 		
 		
-		http://content.vexrobotics.com/docs/inventors-guide/main-2008/12-d-control-configurations-06272008.pdf
+		//http://content.vexrobotics.com/docs/inventors-guide/main-2008/12-d-control-configurations-06272008.pdf
 		
 		double currentTopSpeed = controller.getThrottle(topSpeedNormal, topSpeedCrawl, topSpeedSprint);
 		
 		
 		
+		//leftMotor.set(controller.getLY()*currentTopSpeed);
+		//rightMotor.set(controller.getRY()*currentTopSpeed);
+		
+		//LeftMotor = combination of left shift
+		
+//		if(controller.getRX()>0){ //turn right
+//			leftMotor.set(
+//					(controller.getLY()+controller.getRX())*currentTopSpeed
+//			);
+//			rightMotor.set(
+//					(controller.getLY()-controller.getRX())*currentTopSpeed
+//			);
+//				
+//		}else if(controller.getRX()<0){ //turn left
+//			leftMotor.set(
+//					(controller.getLY()-controller.getRX())*currentTopSpeed
+//			);
+//			rightMotor.set(
+//					(controller.getLY()+controller.getRX())*currentTopSpeed
+//			);			
+
+		
+		//(-abs(x)+1)*y
+		
+		if(controller.getRX()>0){ //turn right
+			leftMotor.set(
+					(controller.getLY())*currentTopSpeed
+			);
+			rightMotor.set(
+					(controller.getLY()*Math.cos(Math.asin(controller.getRX())))*currentTopSpeed
+			);
+			
+		}else if(controller.getRX()<0){ //turn left
+			leftMotor.set(
+					(controller.getLY()*Math.cos(Math.asin(controller.getRX())))*currentTopSpeed
+			);
+			rightMotor.set(
+					(controller.getLY())*currentTopSpeed
+			);	
+		}
 		
 		
-		
-		
-		leftMotor.set(controller.getLY()*currentTopSpeed);
-		rightMotor.set(controller.getRY()*currentTopSpeed);
-		
-		
-		
-		
-		
+
 
 	}
 	

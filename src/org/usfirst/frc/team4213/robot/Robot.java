@@ -43,11 +43,9 @@ public class Robot extends IterativeRobot {
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
-	
-	
 
 	public static Intake intake = new Intake(2);
-	//public static Skis skis = new Skis(1);
+	// public static Skis skis = new Skis(1);
 
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController = new CowCamController(0, 20);
@@ -69,7 +67,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		// Runs the Camera
-		camServer.start(shooterCamController,executor);
+		camServer.start(shooterCamController, executor);
 
 		DriverStation.reportError("got past thread init", false);
 
@@ -124,7 +122,6 @@ public class Robot extends IterativeRobot {
 
 		tankDrive();
 		intakeDriver();
-		
 
 	}
 
@@ -139,25 +136,22 @@ public class Robot extends IterativeRobot {
 	 * Sets motors to Appropriate Speeds Based on Controller Input ( Tank Style
 	 */
 	public void tankDrive() {
-		leftMotor.set(controller.getLY()*controller.getThrottle());
-		rightMotor.set(controller.getRY()*controller.getThrottle());
+		leftMotor.set(controller.getLY() * controller.getThrottle());
+		rightMotor.set(controller.getRY() * controller.getThrottle());
 
 	}
-	
-	
-	
+
 	/**
-	 * Doing hte Intake stuff here.
-	 * There is no encoder it is just on and off
+	 * Doing hte Intake stuff here. There is no encoder it is just on and off
 	 */
-	public void intakeDriver(){
-		
-		if(controller.getButton(4)){ //forwared
+	public void intakeDriver() {
+
+		if (controller.getButton(4)) { // forwared
 			intake.intake(1.0);
-		} else if(controller.getButton(1)){
-			intake.intake(-1.0); //backwards
-		} else{
-			intake.intakeStop(); //stops it if there is no button pushed
+		} else if (controller.getButton(1)) {
+			intake.intake(-1.0); // backwards
+		} else {
+			intake.intakeStop(); // stops it if there is no button pushed
 		}
 	}
 

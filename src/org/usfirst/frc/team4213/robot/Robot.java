@@ -8,6 +8,7 @@ import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
 /* @Authors:
 
@@ -32,8 +33,16 @@ Right =
 
 
  */
+
+
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
+
+
+
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,27 +55,34 @@ import edu.wpi.first.wpilibj.Spark;
  */
 
 public class Robot extends IterativeRobot {
-
+	
 	// Connects to Airflo Controller on Port 0
-	public static AIRFLOController controller = new AIRFLOController(0);
-	// Creates Spark Motor Controllers for the 2 Spark Motors on the Test
-	// Drivetrain
-	public static Spark leftMotor = new Spark(9);
-	public static Spark rightMotor = new Spark(8);
+	AIRFLOController driverController;
+	AIRFLOController gunnerController;
+	
+	//Physical Robot
+	RobotDrive myDrive;  //drivetrain this is tank style but with wheels
+	Intake intake; //intake, we load the balls in with this
+	//public static Skis skis = new Skis(1);
+
+	
+	
+	
+	
 	// Camera Controller
 	public static CowCamServer camServer = new CowCamServer(1180);
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
-	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
-	
-	
-
-	public static Intake intake = new Intake(2);
-	//public static Skis skis = new Skis(1);
 
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController = new CowCamController(0, 20);
+	
+	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
 
+	
+	
+	
+	
 	/*
 	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
 	 * Builds for the Roborio / ARMV7 )
@@ -82,7 +98,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-
+	
+		// Connects to Airflo Controller on Port 0
+		driverController = new AIRFLOController(0);
+		//gunnerController = new AIRFLOController(0);  //TODO: We need the second controller for the other stuff
+		
+		intake = new Intake(new CANTalon(2));
+		
+		Spark leftMotor = new Spark(9);
+		Spark rightMotor = new Spark(8);
+		myDrive = new RobotDrive(leftMotor, rightMotor);
+		
 		// Runs the Camera
 		camServer.start(shooterCamController,executor);
 
@@ -155,78 +181,51 @@ public class Robot extends IterativeRobot {
 	 */
 	public void tankDrive() {
 		
+		//Calculate Max Speed Adjustment Ratio
 		double topSpeedSprint = 1.00;
 		double topSpeedCrawl = 0.3;
 		double topSpeedNormal = 0.6;
+		double topSpeedRatio = driverController.getThrottle(topSpeedNormal, topSpeedCrawl, topSpeedSprint);
 		
 		
-		//http://content.vexrobotics.com/docs/inventors-guide/main-2008/12-d-control-configurations-06272008.pdf
-		
-		double currentTopSpeed = controller.getThrottle(topSpeedNormal, topSpeedCrawl, topSpeedSprint);
-		
-		
-		
-		//leftMotor.set(controller.getLY()*currentTopSpeed);
-		//rightMotor.set(controller.getRY()*currentTopSpeed);
-		
-		//LeftMotor = combination of left shift
-		
-//		if(controller.getRX()>0){ //turn right
-//			leftMotor.set(
-//					(controller.getLY()+controller.getRX())*currentTopSpeed
-//			);
-//			rightMotor.set(
-//					(controller.getLY()-controller.getRX())*currentTopSpeed
-//			);
-//				
-//		}else if(controller.getRX()<0){ //turn left
-//			leftMotor.set(
-//					(controller.getLY()-controller.getRX())*currentTopSpeed
-//			);
-//			rightMotor.set(
-//					(controller.getLY()+controller.getRX())*currentTopSpeed
-//			);			
-
-		
-		//(-abs(x)+1)*y
-		
-		if(controller.getRX()>0){ //turn right
-			leftMotor.set(
-					(controller.getLY())*currentTopSpeed
-			);
-			rightMotor.set(
-					(controller.getLY()*Math.cos(Math.asin(controller.getRX())))*currentTopSpeed
-			);
-			
-		}else if(controller.getRX()<0){ //turn left
-			leftMotor.set(
-					(controller.getLY()*Math.cos(Math.asin(controller.getRX())))*currentTopSpeed
-			);
-			rightMotor.set(
-					(controller.getLY())*currentTopSpeed
-			);	
-		}
+		//OPTION_1 - BASIC TANK
+		//Can we do this and then 'straighten' it with the IMU feedback?
+		//leftMotor.set(controller.getLY()*topSpeedRatio);
+		//rightMotor.set(controller.getRY()*topSpeedRatio);
 		
 		
-
+		//OPTION_2 - BASIC ARCADE --- Untested (recomended)
+		//https://wpilib.screenstepslive.com/s/3120/m/7912/l/95588-getting-your-robot-to-drive-with-the-robotdrive-class
+		//Using one stick to turn and one to throttle should help with steering?
+		//Using WPI is more stable on this first go for us maybe?  We can get fancy later?!
+		double throttle = driverController.getLY()*topSpeedRatio;
+		double spin = driverController.getRX()*topSpeedRatio;
+		boolean squareUnits = true;
+		myDrive.arcadeDrive(throttle, spin, squareUnits);
+		
+		//TODO: Dashboard Feedback and Status Charts
 
 	}
 	
 	
 	
 	/**
-	 * Doing hte Intake stuff here.
+	 * Doing the Intake stuff here.
 	 * There is no encoder it is just on and off
 	 */
 	public void intakeDriver(){
 		
-		if(controller.getButton(4)){ //forwared
+		if(driverController.getButton(4)){ //forward
 			intake.intake(1.0);
-		} else if(controller.getButton(1)){
+		} else if(driverController.getButton(1)){
 			intake.intake(-1.0); //backwards
 		} else{
 			intake.intakeStop(); //stops it if there is no button pushed
 		}
+		
+		//TODO: Dashboard feedback and status
+		
+		
 	}
 
 }

@@ -62,11 +62,11 @@ public class AIRFLOController extends Joystick {
 	* @param topSpeedSprint  value double 0 to 1
 	* @return topSpeedCurrent value double 0 to 1
 	*/
-        public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
-            if(getRawButton(8) || getRawButton(7)) return topSpeedCrawl; //front-bottom triggers
-            else if(getRawButton(6) || getRawButton(9)) return topSpeedSprint; //fromt-bumper buttons
-            else return topSpeedNormal;
-        }
+    public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
+        if(getRawButton(8) || getRawButton(7)) return topSpeedCrawl; //front-bottom triggers
+        else if(getRawButton(6) || getRawButton(9)) return topSpeedSprint; //fromt-bumper buttons
+        else return topSpeedNormal;
+    }
 	
 	public double getHeadingPadDirection(){
 		float x=0, y=0;

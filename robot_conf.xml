@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot>
+    <drivetrain>
+        <motor name="rightMotor">
+            <type>spark</type>
+            <channel>0</channel>
+        </motor>
+        <motor name="leftMotor">
+            <type>spark</type>
+            <channel>0</channel>
+        </motor>
+        <imu>
+            <channel>3</channel>
+        </imu>
+    </drivetrain>
+    <skis>
+        <encoder>
+            <channel-a>3</channel-a>
+            <channel-b>3</channel-b>
+            <reverse>false</reverse>
+        </encoder>
+        <motor>
+            <type>talon</type>
+            <channel>5</channel>
+        </motor>
+    </skis>
+    <turret>
+        <shooter>
+            <motor name="leftMotor">
+                <type>spark</type>
+                <channel>0</channel>
+            </motor>
+            <motor name="rightMotor">
+                <type>spark</type>
+                <channel>0</channel>
+            </motor>
+            <motor name="launcher">
+                <type>spark</type>
+                <channel>3</channel>
+            </motor>
+            <encoder name="launch">
+                <channel-a>3</channel-a>
+                <channel-b>3</channel-b>
+                <reverse>false</reverse>
+            </encoder>
+        </shooter>
+        <shooter-mount>
+            <motor name="spinMotor">
+                <type>spark</type>
+                <channel>0</channel>
+            </motor>
+            <motor name="tiltMotor">
+                <type>spark</type>
+                <channel>0</channel>
+            </motor>
+            <encoder name="spin">
+                <channel-a>3</channel-a>
+                <channel-b>3</channel-b>
+                <reverse>false</reverse>
+            </encoder>
+            <encoder name="upDown">
+                <channel-a>3</channel-a>
+                <channel-b>3</channel-b>
+                <reverse>false</reverse>
+            </encoder>
+        </shooter-mount>
+    </turret>
+    <intake>
+        <rollers>
+            <motor name="roller">
+                <type>spark</type>
+                <channel>5</channel>
+            </motor>
+        </rollers>
+        <beam>
+            <motor name="lift">
+                <type>spark</type>
+                <channel>3</channel>
+            </motor>
+            <motor name="tilt">
+                <type>spark</type>
+                <channel>5</channel>
+            </motor>
+             <motor name="tilt2">
+                <type>spark</type>
+                <channel>5</channel>
+            </motor>
+            <encoder name="lift">
+                <channel-a>3</channel-a>
+                <channel-b>3</channel-b>
+                <reverse>false</reverse>
+            </encoder>
+            <encoder name="tilt">
+                <channel-a>3</channel-a>
+                <channel-b>3</channel-b>
+                <reverse>false</reverse>
+            </encoder>
+            <encoder name="tilt2">
+                <channel-a>3</channel-a>
+                <channel-b>3</channel-b>
+                <reverse>false</reverse>
+            </encoder>
+        </beam>
+    </intake>
+</robot>

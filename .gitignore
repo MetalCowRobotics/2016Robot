@@ -7,3 +7,8 @@ build/jars/opencv-2410.jar
 dist/FRCUserProgram.jar
 dist/FRCUserProgram.jar
 sysProps.xml
+src/org/usfirst/frc/team4213/robot/.Robot.java.swp
+
+src/org/usfirst/frc/team4213/robot/.Skis.java.swp
+
+.robot_conf.xml.swp

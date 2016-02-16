@@ -73,21 +73,12 @@ public class Robot extends IterativeRobot {
 	public static CowCamServer camServer = new CowCamServer(1180);
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor = Executors.newWorkStealingPool();
-<<<<<<< HEAD
-	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
 
-	public static Intake intake = new Intake(2);
-	// public static Skis skis = new Skis(1);
-
-	// A new Camera Controller for the Shooter
-	public CowCamController shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
-=======
 
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController = new CowCamController(0, 20);
 	
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
->>>>>>> refs/remotes/origin/master
 
 	
 	
@@ -189,11 +180,7 @@ public class Robot extends IterativeRobot {
 	 * Sets motors to Appropriate Speeds Based on Controller Input ( Tank Style
 	 */
 	public void tankDrive() {
-<<<<<<< HEAD
-		leftMotor.set(controller.getLY() * controller.getThrottle());
-		rightMotor.set(controller.getRY() * controller.getThrottle());
-=======
-		
+
 		//Calculate Max Speed Adjustment Ratio
 		double topSpeedSprint = 1.00;
 		double topSpeedCrawl = 0.3;
@@ -217,23 +204,11 @@ public class Robot extends IterativeRobot {
 		myDrive.arcadeDrive(throttle, spin, squareUnits);
 		
 		//TODO: Dashboard Feedback and Status Charts
->>>>>>> refs/remotes/origin/master
 
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Doing hte Intake stuff here. There is no encoder it is just on and off
-	 */
-	public void intakeDriver() {
 
-		if (controller.getButton(4)) { // forwared
-			intake.intake(1.0);
-		} else if (controller.getButton(1)) {
-			intake.intake(-1.0); // backwards
-		} else {
-			intake.intakeStop(); // stops it if there is no button pushed
-=======
 	 * Doing the Intake stuff here.
 	 * There is no encoder it is just on and off
 	 */
@@ -245,7 +220,6 @@ public class Robot extends IterativeRobot {
 			intake.intake(-1.0); //backwards
 		} else{
 			intake.intakeStop(); //stops it if there is no button pushed
->>>>>>> refs/remotes/origin/master
 		}
 		
 		//TODO: Dashboard feedback and status

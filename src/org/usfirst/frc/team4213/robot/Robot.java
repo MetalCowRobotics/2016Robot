@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
 	// public static Skis skis = new Skis(1);
 
 	// A new Camera Controller for the Shooter
-	public CowCamController shooterCamController = new CowCamController(0, 20);
+	public CowCamController shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
 
 	/*
 	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific

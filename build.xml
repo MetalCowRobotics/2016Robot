@@ -27,5 +27,8 @@
   
   <!--<import file="${wpilib.ant.dir}/build.xml"/>-->
   <import file="${user.home}/wpilib/java/current/ant/build.xml"/>
-	<var name="classpath" value="${classpath}:.\lib\lib_OpenCV\java\opencv-2410.jar" />
+  <loadfile srcFile="robot_conf.xml" encoding="UTF-8"/>
+
+	
+  <var name="classpath" value="${classpath}:.\lib\lib_OpenCV\java\opencv-2410.jar" />
 </project> 

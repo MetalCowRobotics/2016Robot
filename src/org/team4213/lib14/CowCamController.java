@@ -303,6 +303,7 @@ public class CowCamController {
 			 * processFuture = Optional.empty(); }
 			 */
 			DriverStation.reportError("Camera Started", false);
+			final boolean taskExists = task.isPresent();
 			while (isRunning) {
 				// Reads Camera to an Image Variable
 				// imageLock.writeLock().lock();
@@ -327,10 +328,10 @@ public class CowCamController {
 				 * 
 				 * }
 				 */
-				executor.submit(() -> {
-					task.get().setImage(getImg());
-					dataOutput = task.get().call();
-				});
+				if(taskExists){
+						task.get().setImage(getImg());
+						dataOutput = task.get().call();
+				}
 				Thread.yield();
 			}
 		};

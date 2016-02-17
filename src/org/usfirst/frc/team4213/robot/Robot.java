@@ -107,7 +107,10 @@ public class Robot extends IterativeRobot {
 		
 		Spark leftMotor = new Spark(9);
 		Spark rightMotor = new Spark(8);
+		
 		myDrive = new RobotDrive(leftMotor, rightMotor);
+		
+		
 		
 		// Runs the Camera
 		camServer.start(shooterCamController,executor);

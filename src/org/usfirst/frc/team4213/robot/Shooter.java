@@ -10,23 +10,33 @@ public class Shooter {
 	protected CANTalon motorCam;
 	
 	protected Encoder camEncoder;
-	protected Encoder yawEncoder;
+	protected Encoder stringPot;
 	
-	public Shooter(CANTalon motorPitch, CANTalon motorYaw, CANTalon motorFlywheel, CANTalon motorCam, Encoder camEncoder, Encoder yawEncoder){
-		this.motorPitch = motorPitch;
-		this.motorYaw = motorYaw;
+	final static int GEARRATIO1 = 3;
+	final static int GEARRATIO2 = 188;
+	final static int PPR = 7;
+	
+	public Shooter (CANTalon motorPitch, CANTalon motorYaw, CANTalon motorFlywheel, CANTalon motorCam, Encoder camEncoder, Encoder stringPot) {
+		this.motorPitch    = motorPitch;
+		this.motorYaw      = motorYaw;
 		this.motorFlywheel = motorFlywheel;
-		this.motorCam = motorCam;
+		this.motorCam      = motorCam;
 		
 		this.camEncoder = camEncoder;
-		this.yawEncoder = yawEncoder;
-	}
-	
-	public void tiltUp(double angle){
+		this.stringPot = stringPot;
 		
-		// Figure out Encoders ... I have No IDEA
-		motorPitch.setPosition(angle);
+		// Connected to Talon ( Pitch ) 
+		// Connected to Climber ( Mecanizm ) 
+		
+		// I have a quick question, no args constructor '' WhAT IS +THAT ? 
+		motorPitch.setEncPosition(0);
+		camEncoder.reset();
+		stringPot.reset();
+		
 	}
 	
-
+	public void tiltUp (double angle) {
+		
+		motorPitch.setPosition((angle/360)/(GEARRATIO1 * GEARRATIO2 * PPR));
+	}
 }

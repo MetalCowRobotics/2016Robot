@@ -59,7 +59,7 @@ public class Robot extends IterativeRobot {
 	// Connects to Airflo Controller on Port 0
 	AIRFLOController driverController;
 	AIRFLOController gunnerController;
-	
+	Shooter shooter;
 	//Physical Robot
 	RobotDrive myDrive;  //drivetrain this is tank style but with wheels
 	Intake intake; //intake, we load the balls in with this
@@ -110,7 +110,7 @@ public class Robot extends IterativeRobot {
 		
 		myDrive = new RobotDrive(leftMotor, rightMotor);
 		
-		
+		shooter = new Shooter(); // Test Init
 		
 		// Runs the Camera
 		camServer.start(shooterCamController,executor);
@@ -166,9 +166,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 
-		tankDrive();
-		intakeDriver();
-		
+		//tankDrive();
+		//intakeDriver();
+		shooter.getPotReading();
+		shooter.setYawSpeed(driverController.getRX());
 
 	}
 

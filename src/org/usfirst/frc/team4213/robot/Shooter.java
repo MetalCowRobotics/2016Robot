@@ -41,7 +41,7 @@ public class Shooter {
 	// Temporary Constructor for Testing Purposes
 	public Shooter() {
 		AnalogInput input = new AnalogInput(9);
-		stringPot = new AnalogPotentiometer(input, 360,0);
+		stringPot = new AnalogPotentiometer(input, 27/10 , 0);
 		motorYaw = new CANTalon(1);
 	}
 

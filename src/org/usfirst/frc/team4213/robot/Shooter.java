@@ -19,6 +19,7 @@ public class Shooter {
 	final static int GEARRATIO1 = 3;
 	final static int GEARRATIO2 = 188;
 	final static int PPR = 7;
+	double gearRatio = GEARRATIO1 * GEARRATIO2 * PPR;
 	
 	public Shooter (CANTalon motorPitch, CANTalon motorYaw, CANTalon motorFlywheel, CANTalon motorCam, Encoder camEncoder, Encoder stringPot) {
 		this.motorPitch    = motorPitch;
@@ -58,12 +59,12 @@ public class Shooter {
 		
 		
 
-		motorPitch.setPID(100, 0, 0);
+		motorPitch.setPID(5, 0, 0);
 		motorPitch.enableControl();
 	}
 	
 	public void angleSet (double angle) {
-		motorPitch.set((angle/360)*(GEARRATIO1 * GEARRATIO2 * PPR));
+		motorPitch.set((angle/360)*(gearRatio));
 		printAngle();
 	}
 	
@@ -82,9 +83,8 @@ public class Shooter {
 	}
 	
 	private void printAngle(){
-		//(angle/360)*(GEARRATIO1 * GEARRATIO2 * PPR)
-		motorPitch.getPosition();
-		DriverStation.reportError("        Angle:"+(motorPitch.get()/360)*(GEARRATIO1 * GEARRATIO2 * PPR), false);
+		DriverStation.reportError("        Angle:"+( (motorPitch.getEncPosition() / gearRatio ) * 360),false);
+				
 	}
 	
 	

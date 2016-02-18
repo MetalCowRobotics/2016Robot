@@ -64,7 +64,7 @@ public class Shooter {
 	}
 	
 	public void angleSet (double angle) {
-		motorPitch.set((angle/360)*(gearRatio));
+		motorPitch.set((angle/360)*(gearRatio));  ///multiply by 4
 		printAngle();
 	}
 	

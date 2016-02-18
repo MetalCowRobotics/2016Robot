@@ -68,6 +68,10 @@ public class Robot extends IterativeRobot {
 
 	Shooter shooter;
 	
+	CANTalon shootsBalls;
+	CANTalon ballKicker;
+	
+	
 	
 	
 	// Camera Controller
@@ -111,7 +115,13 @@ public class Robot extends IterativeRobot {
 		
 		myDrive = new RobotDrive(leftMotor, rightMotor);
 		
+		shootsBalls = new CANTalon(4);
+		ballKicker = new CANTalon(0);
+		
+		
+		
 		shooter = new Shooter();
+		
 		
 		// Runs the Camera
 		camServer.start(shooterCamController,executor);
@@ -169,18 +179,27 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 
-		//tankDrive();
-		//intakeDriver();
+		
+		
+		
+		if(!driverController.getButton(8)){
+			tankDrive();
+		}
+		
+		
+		
+		
+		intakeDriver();
 		//DriverStation.reportError("/n Spee"+shooter.motorPitch.getSpeed(), false);
 		//DriverStation.reportError("/n"+shooter.motorPitch.getEncPosition(), false);
 		//DriverStation.reportError("        "+shooter.motorPitch.get(), false);
 		//DriverStation.reportError("/n"+shooter.motorPitch.getPosition(), false);
 		//shooter.motorPitch.set(100);
 
-		if(driverController.getButton(2)){
-			shooter.angleSet(90);
-			DriverStation.reportError("        1:",false);
-		}
+//		if(driverController.getButton(2)){
+//			shooter.angleSet(90);
+//			DriverStation.reportError("        1:",false);
+//		}
 		
 		
 		if(driverController.getButton(8)){
@@ -197,7 +216,27 @@ public class Robot extends IterativeRobot {
 			
 			
 		}
+
 		
+		
+		if(driverController.getButton(3)){ //shoot ball
+			shootsBalls.set(.6);
+		}else if(driverController.getButton(2)){ //out???? ball
+			shootsBalls.set(-1.0);
+		}else{
+			shootsBalls.set(0);
+		}
+		
+		
+		if(driverController.getButton(5)){
+			ballKicker.set(.25);
+		}else if(driverController.getButton(6)){
+			ballKicker.set(-.25);
+		}else{
+			ballKicker.set(0);
+		}
+		
+	
 		
 		
 		

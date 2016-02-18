@@ -59,7 +59,7 @@ public class Shooter {
 		
 		
 
-		motorPitch.setPID(5, 0, 0);
+		motorPitch.setPID(3, 0, 0);
 		motorPitch.enableControl();
 	}
 	
@@ -69,16 +69,16 @@ public class Shooter {
 	}
 	
 	public void angleIncrease(){
-		if(motorPitch.get()<200000){  //MAX_ANGLE
+		//if(motorPitch.get()){  //MAX_ANGLE
 			motorPitch.set(motorPitch.get()+100);
-		}
+		//}
 		printAngle();
 	}
 	
 	public void angleDecrease(){
-		if(motorPitch.get()>0){  //MAX_ANGLE
-			motorPitch.set(motorPitch.get()+100);
-		}
+		//if(motorPitch.get()){  //MAX_ANGLE
+			motorPitch.set(motorPitch.get()-100);
+		//}
 		printAngle();
 	}
 	

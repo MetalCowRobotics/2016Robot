@@ -3,6 +3,7 @@ package org.usfirst.frc.team4213.robot;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 // Import the Custom Extension Library Items
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
@@ -65,7 +66,7 @@ public class Robot extends IterativeRobot {
 	Intake intake; //intake, we load the balls in with this
 	//public static Skis skis = new Skis(1);
 
-	
+	Shooter shooter;
 	
 	
 	
@@ -110,7 +111,7 @@ public class Robot extends IterativeRobot {
 		
 		myDrive = new RobotDrive(leftMotor, rightMotor);
 		
-		
+		shooter = new Shooter();
 		
 		// Runs the Camera
 		camServer.start(shooterCamController,executor);
@@ -158,17 +159,59 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
+		shooter.motorPitch.setEncPosition(0);
+		shooter.motorPitch.setPosition(0);
 	}
-
+	
 	/**
 	 * This function is called periodically during operator control
 	 */
 	@Override
 	public void teleopPeriodic() {
 
-		tankDrive();
-		intakeDriver();
+		//tankDrive();
+		//intakeDriver();
+		//DriverStation.reportError("/n Spee"+shooter.motorPitch.getSpeed(), false);
+		//DriverStation.reportError("/n"+shooter.motorPitch.getEncPosition(), false);
+		//DriverStation.reportError("        "+shooter.motorPitch.get(), false);
+		//DriverStation.reportError("/n"+shooter.motorPitch.getPosition(), false);
+		//shooter.motorPitch.set(100);
+
+		if(driverController.getButton(2)){
+			shooter.angleSet(90);
+			DriverStation.reportError("        1:",false);
+		}
 		
+		
+		if(driverController.getButton(8)){
+
+			
+
+			if(driverController.getLY()>0){
+				shooter.angleIncrease();
+			}
+			if(driverController.getLY()<0){
+				shooter.angleDecrease();
+			}
+			
+			
+			
+		}
+		
+		
+		
+		
+		
+//		if(driverController.getButton(1)){
+//			shooter.tiltUp(0);
+//		}else if(driverController.getButton(2)){
+//			shooter.tiltUp(40);
+//		}else if(driverController.getButton(3)){
+//			shooter.tiltUp(90);
+//		}else if(driverController.getButton(4)){
+//			shooter.tiltUp(360);
+//		}
+
 
 	}
 

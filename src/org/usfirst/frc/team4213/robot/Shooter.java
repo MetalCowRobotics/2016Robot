@@ -1,6 +1,10 @@
 package org.usfirst.frc.team4213.robot;
 
+import edu.wpi.first.wpilibj.CANSpeedController.ControlMode;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 
 public class Shooter {
@@ -27,16 +31,62 @@ public class Shooter {
 		
 		// Connected to Talon ( Pitch ) 
 		// Connected to Climber ( Mecanizm ) 
-		
+
 		// I have a quick question, no args constructor '' WhAT IS +THAT ? 
 		motorPitch.setEncPosition(0);
 		camEncoder.reset();
 		stringPot.reset();
 		
+		
+		
 	}
 	
-	public void tiltUp (double angle) {
+	public Shooter(){
+		// test case constructor 
 		
-		motorPitch.setPosition((angle/360)/(GEARRATIO1 * GEARRATIO2 * PPR));
+		this.motorPitch = new CANTalon(3);
+		DriverStation.reportError(""+motorPitch.getAnalogInPosition(),false);
+		motorPitch.setControlMode(TalonControlMode.Position.value);
+		DriverStation.reportError(""+motorPitch.getControlMode(),false);
+		//motorPitch.setEncPosition(0);
+		printAngle();
+		motorPitch.enable();
+		motorPitch.reset();
+		printAngle();
+		motorPitch.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+
+		
+		
+
+		motorPitch.setPID(100, 0, 0);
+		motorPitch.enableControl();
 	}
+	
+	public void angleSet (double angle) {
+		motorPitch.set((angle/360)*(GEARRATIO1 * GEARRATIO2 * PPR));
+		printAngle();
+	}
+	
+	public void angleIncrease(){
+		if(motorPitch.get()<200000){  //MAX_ANGLE
+			motorPitch.set(motorPitch.get()+100);
+		}
+		printAngle();
+	}
+	
+	public void angleDecrease(){
+		if(motorPitch.get()>0){  //MAX_ANGLE
+			motorPitch.set(motorPitch.get()+100);
+		}
+		printAngle();
+	}
+	
+	private void printAngle(){
+		//(angle/360)*(GEARRATIO1 * GEARRATIO2 * PPR)
+		motorPitch.getPosition();
+		DriverStation.reportError("        Angle:"+(motorPitch.get()/360)*(GEARRATIO1 * GEARRATIO2 * PPR), false);
+	}
+	
+	
+	
 }

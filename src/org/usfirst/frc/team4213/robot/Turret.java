@@ -2,12 +2,17 @@ package org.usfirst.frc.team4213.robot;
 
 import java.util.Dictionary;
 
+import org.team4213.lib14.EncMotorTalon;
+
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 
 public class Turret {
 	
@@ -15,8 +20,8 @@ public class Turret {
 	protected CANTalon motorYaw;
 	protected CANTalon motorFlywheel;
 	protected CANTalon motorCam;
-	
-	PIDController pid;
+	protected Potentiometer stringPot;
+
 	public enum TurretState {
 		DOWN,RAISED,ARMED;
 	}
@@ -58,8 +63,10 @@ public class Turret {
 		// test case constructor 
 		motorPitch =  new CANTalon(3);
 		motorFlywheel =  new CANTalon(4);
-		motorCam = new CANTalon(0);
+		motorCam = new EncMotorTalon(0, new Encoder(4, 5, false, CounterBase.EncodingType.k1X));
 		motorYaw = new CANTalon(1);
+		stringPot =	new AnalogPotentiometer(0, 1000 , 0);
+
 		
 		DriverStation.reportError(""+motorPitch.getAnalogInPosition(),false);
 		motorPitch.setControlMode(TalonControlMode.Position.value);
@@ -74,7 +81,6 @@ public class Turret {
 		motorPitch.enableControl();
 		motorPitch.setEncPosition((int)PITCH_OUT_PPR*STARTING_ANGLE/360);
 		motorPitch.setPosition((int)PITCH_OUT_PPR*STARTING_ANGLE/360);
-		
 		
 		
 		

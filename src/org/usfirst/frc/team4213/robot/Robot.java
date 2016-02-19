@@ -25,6 +25,8 @@ Skis = 7
 Left = 
 Right = 
 
+// BOOM : POSITIVE == UP
+
 
 
 
@@ -70,6 +72,7 @@ public class Robot extends IterativeRobot {
 	
 	CANTalon shootsBalls;
 	CANTalon ballKicker;
+	CANTalon boomLifter;
 	
 	
 	
@@ -117,6 +120,7 @@ public class Robot extends IterativeRobot {
 		
 		shootsBalls = new CANTalon(4);
 		ballKicker = new CANTalon(0);
+		boomLifter = new CANTalon(5);
 		
 		
 		
@@ -205,12 +209,22 @@ public class Robot extends IterativeRobot {
 		if(driverController.getButton(8)){
 
 			
-
+			//up/down on turret
 			if(driverController.getLY()>0){
 				shooter.angleIncrease();
 			}
 			if(driverController.getLY()<0){
 				shooter.angleDecrease();
+			}
+			
+			
+			//up/down on boom
+			if(driverController.getRY()>0){
+				boomLifter.set(.25); //up
+			} else if(driverController.getRY()<0){ //down
+				boomLifter.set(-.25);
+			}else{ //stop
+				boomLifter.set(0);
 			}
 			
 			
@@ -228,10 +242,10 @@ public class Robot extends IterativeRobot {
 		}
 		
 		
-		if(driverController.getButton(5)){
+		if(driverController.getButton(5)){ //kicker out
 			ballKicker.set(.25);
-		}else if(driverController.getButton(6)){
-			ballKicker.set(-.25);
+		}else if(driverController.getButton(6)){ //kicker in
+			ballKicker.set(-.5);
 		}else{
 			ballKicker.set(0);
 		}

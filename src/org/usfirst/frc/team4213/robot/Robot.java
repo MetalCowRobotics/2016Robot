@@ -4,12 +4,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+
+
+
 // Import the Custom Extension Library Items
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
+import org.team4213.lib14.EncMotorTalon;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DriverStation;
 /* @Authors:
 
@@ -39,6 +44,7 @@ Right =
 
 
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Spark;
@@ -69,7 +75,8 @@ public class Robot extends IterativeRobot {
 	//public static Skis skis = new Skis(1);
 
 	Shooter shooter;
-	
+	Turret turret;
+	Encoder fancyEncoder;
 	CANTalon shootsBalls;
 	CANTalon ballKicker;
 	CANTalon boomLifter;
@@ -83,7 +90,7 @@ public class Robot extends IterativeRobot {
 	public ExecutorService executor = Executors.newWorkStealingPool();
 
 	// A new Camera Controller for the Shooter
-	public CowCamController shooterCamController = new CowCamController(0, 20);
+	public CowCamController shooterCamController = new CowCamController(0, 20,CowCamController.ImageTask.SHOOTER);
 	
 	// The Task Run to Handle the Shooter Camera ( Aim at Tower )
 
@@ -111,7 +118,7 @@ public class Robot extends IterativeRobot {
 		driverController = new AIRFLOController(0);
 		//gunnerController = new AIRFLOController(0);  //TODO: We need the second controller for the other stuff
 		
-		intake = new Intake(new CANTalon(2));
+		/*intake = new Intake(new CANTalon(2));
 		
 		Spark leftMotor = new Spark(9);
 		Spark rightMotor = new Spark(8);
@@ -126,8 +133,13 @@ public class Robot extends IterativeRobot {
 		
 		shooter = new Shooter();
 		
-		
+		*/
 		// Runs the Camera
+		fancyEncoder = new Encoder(4,5,false,CounterBase.EncodingType.k4X);
+		ballKicker = new CANTalon(0);
+		//ballKicker.setEncPosition(0);
+		
+		//turret = new Turret();
 		camServer.start(shooterCamController,executor);
 
 		DriverStation.reportError("got past thread init", false);
@@ -173,8 +185,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		shooter.motorPitch.setEncPosition(0);
-		shooter.motorPitch.setPosition(0);
+
 	}
 	
 	/**
@@ -182,10 +193,29 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-
 		
+		ballKicker.set(driverController.getRX());
+		DriverStation.reportError("" + fancyEncoder.get(), false);
+	/*	if(driverController.getButton(2)){
+			ballKicker.set(7*27*3*(180/360));
+		}
+		ballKicker.update();
+		DriverStation.reportError("\n"+ballKicker.getEncPosition(), false);*/
+/*
+		if(driverController.getButton(7)){
+			if(driverController.getButton(4)){
+				turret.raiseTurret();
+			}else if(driverController.getButton(1)){
+				turret.dropTurret();
+			}
+		}else{
+			turret.stop();
+		}
 		
+*/
+		//DriverStation.reportError(""+ turret.getAngle(), false);
 		
+		/*
 		if(!driverController.getButton(8)){
 			tankDrive();
 		}
@@ -264,7 +294,9 @@ public class Robot extends IterativeRobot {
 //		}else if(driverController.getButton(4)){
 //			shooter.tiltUp(360);
 //		}
-
+		*/
+		
+		
 
 	}
 
@@ -273,6 +305,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		DriverStation.reportError("/n Encoder : "+fancyEncoder.get(),false);
 	}
 
 	/**

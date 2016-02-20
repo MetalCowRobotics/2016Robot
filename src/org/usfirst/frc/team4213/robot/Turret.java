@@ -32,10 +32,10 @@ public class Turret {
 	final static int PITCH_GEARRATIO2 = 188;
 	final static int PITCH_PPR = 7;
 	final static int PITCH_OUT_PPR = PITCH_GEARRATIO1 * PITCH_GEARRATIO2 * PITCH_PPR;
-	final static int STARTING_ANGLE = -38 * PITCH_OUT_PPR;
-	
-	final static int PITCH_MIN_ANGLE = 20 * PITCH_OUT_PPR;
-	final static int PITCH_MAX_ANGLE = 85 * PITCH_OUT_PPR;
+	final static int STARTING_ANGLE = 0;
+	final static int MID = 38;
+	final static int PITCH_MIN_ANGLE = 20 + MID;
+	final static int PITCH_MAX_ANGLE = 85 + MID;
 	
 	
 	/*public  Turret(CANTalon motorPitch, CANTalon motorYaw, CANTalon motorFlywheel, CANTalon motorCam, Encoder camEncoder, Encoder stringPot) {
@@ -68,9 +68,9 @@ public class Turret {
 		stringPot =	new AnalogPotentiometer(0, 1000 , 0);
 
 		
-		DriverStation.reportError(""+motorPitch.getAnalogInPosition(),false);
+		//DriverStation.reportError(""+motorPitch.getAnalogInPosition(),false);
 		motorPitch.setControlMode(TalonControlMode.Position.value);
-		DriverStation.reportError(""+motorPitch.getControlMode(),false);
+		//DriverStation.reportError(""+motorPitch.getControlMode(),false);
 		//motorPitch.setEncPosition(0);
 		printAngle();
 		motorPitch.enable();
@@ -79,6 +79,7 @@ public class Turret {
 		motorPitch.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		motorPitch.setPID(3, 0, 0);
 		motorPitch.enableControl();
+		DriverStation.reportError("\n count to set" + (int)PITCH_OUT_PPR*STARTING_ANGLE/360, false);
 		motorPitch.setEncPosition((int)PITCH_OUT_PPR*STARTING_ANGLE/360);
 		motorPitch.setPosition((int)PITCH_OUT_PPR*STARTING_ANGLE/360);
 		
@@ -130,8 +131,27 @@ public class Turret {
 	
 	public void raiseTurret(){
 		state = TurretState.RAISED;
-		motorPitch.set(PITCH_OUT_PPR*(45/360));
+		motorPitch.set(PITCH_OUT_PPR*(25/360));
 	}
 	
+	public void dropTurret(){
+		state = TurretState.DOWN;
+		motorPitch.set(PITCH_OUT_PPR*(STARTING_ANGLE/360));
+	}
+	
+	public void armShooter(){
+		
+	}
+	
+	public int getAngle(){
+		return motorPitch.getEncPosition();
+	}
+	
+	public void stop(){
+		motorPitch.changeControlMode(TalonControlMode.PercentVbus);
+		motorPitch.set(0);
+		motorPitch.changeControlMode(TalonControlMode.Position);
+		
+	}
 
 }
